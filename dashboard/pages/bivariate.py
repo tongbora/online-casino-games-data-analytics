@@ -1,9 +1,9 @@
 """
 dashboard/pages/bivariate.py
 ─────────────────────────────
-Page: 3.4 Bivariate & Multivariate Analysis
+Page: 1.4 Bivariate & Multivariate Analysis
 Relationships between variables supporting the "House Always Wins?" narrative.
-(EDA Requirement 3.4)
+(EDA Requirement 1.4)
 """
 
 import pandas as pd
@@ -15,8 +15,8 @@ from dashboard.config import COLORS, PALETTE, VOL_ORDER, badge, render_chart, th
 
 
 def render(df: pd.DataFrame) -> None:
-    st.title('3.4  Bivariate & Multivariate Analysis')
-    badge('EDA REQUIREMENT 3.4')
+    st.title('1.4  Bivariate & Multivariate Analysis')
+    badge('EDA REQUIREMENT 1.4')
     st.markdown('*Relationships between variables that support the narrative.*')
 
     # ── House edge by game type ───────────────────────────────────────────────

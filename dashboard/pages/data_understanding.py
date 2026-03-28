@@ -1,9 +1,9 @@
 """
 dashboard/pages/data_understanding.py
 ──────────────────────────────────────
-Page: 3.1 Data Understanding
+Page: 1.1  Data Understanding
 Covers dataset dimensions, variable descriptions, missing values,
-and summary statistics. (EDA Requirement 3.1)
+and summary statistics. (EDA Requirement 1.1)
 """
 
 import pandas as pd
@@ -39,8 +39,8 @@ VAR_DESC = [
 
 
 def render(df: pd.DataFrame, df_raw: pd.DataFrame) -> None:
-    st.title('3.1  Data Understanding')
-    badge('EDA REQUIREMENT 3.1')
+    st.title('1.1  Data Understanding')
+    badge('EDA REQUIREMENT 1.1')
 
     # ── Dimensions ────────────────────────────────────────────────────────────
     st.markdown('## Dataset Dimensions & Variable Types')

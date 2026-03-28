@@ -19,12 +19,12 @@ from Kaggle.
 The analysis covers all six EDA requirements:
 | # | Section |
 |---|---|
-| 3.1 | Data Understanding |
-| 3.2 | Data Cleaning & Preparation |
-| 3.3 | Univariate Analysis |
-| 3.4 | Bivariate & Multivariate Analysis |
-| 3.5 | Visualisations |
-| 3.6 | Key Insights & Conclusion |
+| 1.1 | Data Understanding |
+| 1.2 | Data Cleaning & Preparation |
+| 1.3 | Univariate Analysis |
+| 1.4 | Bivariate & Multivariate Analysis |
+| 1.5 | Visualisations |
+| 1.6 | Key Insights & Conclusion |
 
 ---
 
@@ -81,13 +81,13 @@ data-analytics/
 │   ├── config.py                   # CSS, colours, Plotly theme, UI helpers
 │   ├── data.py                     # Data loading & cleaning (cached)
 │   └── pages/                      # One module per EDA section
-│       ├── introduction.py         # 🏠 Introduction & research question
-│       ├── data_understanding.py   # 3.1 Dimensions, types, missing values
-│       ├── data_cleaning.py        # 3.2 Cleaning steps & feature engineering
-│       ├── univariate.py           # 3.3 Single-variable distributions
-│       ├── bivariate.py            # 3.4 Relationships & correlations
-│       ├── visualisations.py       # 3.5 All charts in tabbed view
-│       └── insights.py             # 3.6 Findings, conclusion, limitations
+│       ├── introduction.py         #  Introduction & research question
+│       ├── data_understanding.py   # 1.1 Dimensions, types, missing values
+│       ├── data_cleaning.py        # 1.2 Cleaning steps & feature engineering
+│       ├── univariate.py           # 1.3 Single-variable distributions
+│       ├── bivariate.py            # 1.4 Relationships & correlations
+│       ├── visualisations.py       # 1.5 All charts in tabbed view
+│       └── insights.py             # 1.6 Findings, conclusion, limitations
 │
 ├── src/
 │   └── eda/
@@ -127,12 +127,12 @@ data-analytics/
 | Sidebar | Content |
 |---|---|
 | **🏠 Introduction** | Research question, dataset KPIs, story overview |
-| **3.1 Data Understanding** | 20-column variable table, missing value charts, summary stats |
-| **3.2 Data Cleaning** | 7 cleaning steps with justifications, engineered features |
-| **3.3 Univariate Analysis** | RTP, house edge, volatility, min bet, max multiplier distributions |
-| **3.4 Bivariate & Multivariate** | House edge by game type, correlation matrix, provider ranking, trend over years |
-| **3.5 Visualisations Summary** | All key charts in 4 tabs (House Edge / Volatility / Game Types / Win Potential) |
-| **3.6 Key Insights & Conclusion** | 5 data-backed findings, conclusion, limitations, next steps |
+| **1.1 Data Understanding** | 20-column variable table, missing value charts, summary stats |
+| **1.2 Data Cleaning** | 7 cleaning steps with justifications, engineered features |
+| **1.3 Univariate Analysis** | RTP, house edge, volatility, min bet, max multiplier distributions |
+| **1.4 Bivariate & Multivariate** | House edge by game type, correlation matrix, provider ranking, trend over years |
+| **1.5 Visualisations Summary** | All key charts in 4 tabs (House Edge / Volatility / Game Types / Win Potential) |
+| **1.6 Key Insights & Conclusion** | 5 data-backed findings, conclusion, limitations, next steps |
 
 ---
 
@@ -161,6 +161,6 @@ top10   = top_categories(df, "game_type") # count + share for top N categories
 ## 📝 Notes
 
 - All charts are purposeful and labelled — each contributes directly to the story.
-- Cleaning decisions are documented in the **3.2 Data Cleaning** dashboard page.
+- Cleaning decisions are documented in the **1.2 Data Cleaning** dashboard page.
 - The `data/` directory is gitignored; download the dataset locally before running.
 - Toggle **"Use 200k sample"** in the sidebar for faster exploration; uncheck for full 1.2M analysis.

@@ -1,9 +1,9 @@
 """
 dashboard/pages/insights.py
 ────────────────────────────
-Page: 3.6 Key Insights & Conclusion
+Page: 1.6 Key Insights & Conclusion
 5 data-backed findings, conclusion, limitations, and next steps.
-(EDA Requirement 3.6)
+(EDA Requirement 1.6)
 """
 
 import pandas as pd
@@ -13,8 +13,8 @@ from dashboard.config import badge, insight
 
 
 def render(df: pd.DataFrame) -> None:
-    st.title('3.6  Key Insights & Conclusion')
-    badge('EDA REQUIREMENT 3.6')
+    st.title('1.6  Key Insights & Conclusion')
+    badge('EDA REQUIREMENT 1.6')
     st.markdown("### Story Angle: *\"The House Always Wins?\"*")
 
     st.markdown('## 🔍 5 Key Findings')

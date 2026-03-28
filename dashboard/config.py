@@ -23,13 +23,13 @@ VOL_ORDER = ['Low', 'Medium', 'High', 'Very High']
 
 # ── Page sections (sidebar labels) ───────────────────────────────────────────
 SECTIONS = [
-    '🏠  Introduction',
-    '3.1  Data Understanding',
-    '3.2  Data Cleaning',
-    '3.3  Univariate Analysis',
-    '3.4  Bivariate & Multivariate',
-    '3.5  Visualisations Summary',
-    '3.6  Key Insights & Conclusion',
+    '  Introduction',
+    '1.1  Data Understanding',
+    '1.2  Data Cleaning',
+    '1.3  Univariate Analysis',
+    '1.4  Bivariate & Multivariate',
+    '1.5  Visualisations Summary',
+    '1.6  Key Insights & Conclusion',
 ]
 
 

@@ -1,9 +1,9 @@
 """
 dashboard/pages/visualisations.py
 ───────────────────────────────────
-Page: 3.5 Key Visualisations Summary
+Page: 1.5 Key Visualisations Summary
 All charts from the analysis consolidated into one tabbed view.
-(EDA Requirement 3.5)
+(EDA Requirement 1.5)
 """
 
 import pandas as pd
@@ -14,8 +14,8 @@ from dashboard.config import COLORS, PALETTE, VOL_ORDER, badge, render_chart, th
 
 
 def render(df: pd.DataFrame) -> None:
-    st.title('3.5  Key Visualisations Summary')
-    badge('EDA REQUIREMENT 3.5')
+    st.title('1.5  Key Visualisations Summary')
+    badge('EDA REQUIREMENT 1.5')
     st.markdown('*All key charts in one place — clear, labelled, and tied to the story.*')
 
     tab1, tab2, tab3, tab4 = st.tabs(

@@ -70,10 +70,10 @@ This EDA investigates:
 
 | Section | Content |
 |---|---|
-| **3.1 Data Understanding** | Shape, types, missing values, summary stats |
-| **3.2 Data Cleaning** | Steps taken, feature engineering justifications |
-| **3.3 Univariate Analysis** | Distributions of RTP, house edge, volatility, bets, wins |
-| **3.4 Bivariate & Multivariate** | Relationships, correlations, grouped comparisons |
-| **3.5 Visualisations Summary** | All key charts in one view |
-| **3.6 Key Insights & Conclusion** | 5 findings + limitations |
+| **1.1 Data Understanding** | Shape, types, missing values, summary stats |
+| **1.2 Data Cleaning** | Steps taken, feature engineering justifications |
+| **1.3 Univariate Analysis** | Distributions of RTP, house edge, volatility, bets, wins |
+| **1.4 Bivariate & Multivariate** | Relationships, correlations, grouped comparisons |
+| **1.5 Visualisations Summary** | All key charts in one view |
+| **1.6 Key Insights & Conclusion** | 5 findings + limitations |
     """)

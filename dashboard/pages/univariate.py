@@ -1,9 +1,9 @@
 """
 dashboard/pages/univariate.py
 ──────────────────────────────
-Page: 3.3 Univariate Analysis
+Page: 1.3 Univariate Analysis
 Single-variable distributions for all key story variables.
-(EDA Requirement 3.3)
+(EDA Requirement 1.3)
 """
 
 import pandas as pd
@@ -14,8 +14,8 @@ from dashboard.config import COLORS, PALETTE, VOL_ORDER, badge, render_chart
 
 
 def render(df: pd.DataFrame) -> None:
-    st.title('3.3  Univariate Analysis')
-    badge('EDA REQUIREMENT 3.3')
+    st.title('1.3  Univariate Analysis')
+    badge('EDA REQUIREMENT 1.3')
     st.markdown('*Distributions of key variables relevant to the story.*')
 
     # ── RTP ───────────────────────────────────────────────────────────────────

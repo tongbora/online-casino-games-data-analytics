@@ -1,9 +1,9 @@
 """
 dashboard/pages/data_cleaning.py
 ─────────────────────────────────
-Page: 3.2 Data Cleaning & Preparation
+Page: 1.2  Data Cleaning & Preparation
 Displays all cleaning steps, their justifications,
-and the engineered features. (EDA Requirement 3.2)
+and the engineered features. (EDA Requirement 1.2)
 """
 
 import pandas as pd
@@ -13,8 +13,8 @@ from dashboard.config import badge
 
 
 def render(df: pd.DataFrame, cleaning_log: list) -> None:
-    st.title('3.2  Data Cleaning & Preparation')
-    badge('EDA REQUIREMENT 3.2')
+    st.title('1.2  Data Cleaning & Preparation')
+    badge('EDA REQUIREMENT 1.2')
 
     st.markdown("""
 ## Overview
