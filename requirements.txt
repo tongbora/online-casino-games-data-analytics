@@ -1,3 +1,4 @@
+altair==6.0.0
 pandas
 numpy
 matplotlib
@@ -6,4 +7,4 @@ plotly
 scikit-learn
 jupyter
 pyarrow
-streamlit
+streamlit>=1.38,<2
