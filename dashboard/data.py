@@ -10,17 +10,76 @@ import sys
 
 import pandas as pd
 import streamlit as st
+from kaggle.api.kaggle_api_extended import KaggleApi
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.append(str(ROOT))
 from src.eda.utils import load_csv
 
 CSV_PATH = ROOT / 'data' / 'raw' / 'online_casino_games.csv'
+KAGGLE_DATASET = 'igormerlinicomposer/online-casino-games-dataset-1-2m-records'
+KAGGLE_CSV_CANDIDATES = [
+    'online_casino_games_dataset_v2.csv',
+    'online_casino_games_dataset.csv',
+    'online_casino_games_dataset_1_2m_records.csv',
+]
+
+
+def _ensure_local_csv() -> None:
+    """Download the dataset from Kaggle if it is not already present locally."""
+    if CSV_PATH.exists():
+        return
+
+    CSV_PATH.parent.mkdir(parents=True, exist_ok=True)
+    st.info('📥 Downloading dataset from Kaggle…')
+
+    try:
+        api = KaggleApi()
+        api.authenticate()
+
+        # Try direct file download for known names
+        for fname in KAGGLE_CSV_CANDIDATES:
+            try:
+                api.dataset_download_file(
+                    KAGGLE_DATASET,
+                    fname,
+                    path=str(CSV_PATH.parent),
+                    force=True,
+                    quiet=True,
+                )
+                candidate_path = CSV_PATH.parent / fname
+                if candidate_path.exists():
+                    candidate_path.rename(CSV_PATH)
+                    break
+            except Exception:
+                continue
+
+        # If still missing, fetch all and unzip, then pick a CSV
+        if not CSV_PATH.exists():
+            api.dataset_download_files(
+                KAGGLE_DATASET,
+                path=str(CSV_PATH.parent),
+                unzip=True,
+                force=True,
+                quiet=True,
+            )
+            csv_files = sorted(CSV_PATH.parent.glob('*.csv'))
+            if csv_files:
+                csv_files[0].rename(CSV_PATH)
+
+    except Exception as exc:  # pragma: no cover - streamlit runtime feedback
+        st.error(f'❌ Kaggle download failed: {exc}')
+        st.stop()
+
+    if not CSV_PATH.exists():
+        st.error('❌ Download did not produce the expected CSV file.')
+        st.stop()
 
 
 @st.cache_data(show_spinner='⏳ Loading dataset…')
 def load_raw(nrows: int | None = None) -> pd.DataFrame:
     """Load the raw CSV with optional row limit."""
+    _ensure_local_csv()
     return load_csv(CSV_PATH, nrows=nrows)
 
 

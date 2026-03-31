@@ -8,3 +8,4 @@ scikit-learn
 jupyter
 pyarrow
 streamlit>=1.38,<2
+kaggle

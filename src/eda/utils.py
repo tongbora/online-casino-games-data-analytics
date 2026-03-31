@@ -5,8 +5,9 @@ from typing import Optional
 import pandas as pd
 
 # Load data
-def load_csv(path: Path, *, nrows: Optional[int] = None) -> pd.DataFrame:
+def load_csv(path: Path | str, *, nrows: Optional[int] = None) -> pd.DataFrame:
     """Load a CSV file with sensible defaults for large datasets."""
+    path = path.expanduser() if isinstance(path, Path) else path
     return pd.read_csv(path, nrows=nrows, low_memory=False)
 
 
