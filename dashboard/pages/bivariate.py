@@ -29,11 +29,18 @@ def render(df: pd.DataFrame) -> None:
     st.markdown('## House Edge by Game Type')
     col1, col2 = st.columns([2, 1])
     with col1:
-        fig = px.box(df, x='game_type', y='house_edge',
-                     color='game_type', color_discrete_sequence=PALETTE,
-                     labels={'game_type': 'Game Type', 'house_edge': 'House Edge (%)'},
-                     title='House Edge Distribution by Game Type')
-        fig.update_layout(showlegend=False)
+        he_summary = (df.groupby('game_type', observed=True)['house_edge']
+                        .agg(['mean', 'median', 'min', 'max'])
+                        .round(3).reset_index())
+        he_summary.columns = ['Game Type', 'Mean HE%', 'Median HE%', 'Min', 'Max']
+        he_summary = he_summary.sort_values('Mean HE%', ascending=False)
+        fig = px.bar(he_summary, x='Game Type', y='Mean HE%',
+                     color='Mean HE%', color_continuous_scale='Reds',
+                     text='Mean HE%',
+                     labels={'Game Type': 'Game Type', 'Mean HE%': 'Mean House Edge (%)'},
+                     title='Mean House Edge by Game Type')
+        fig.update_traces(texttemplate='%{text:.2f}%', textposition='outside')
+        fig.update_coloraxes(showscale=False)
         render_chart(fig, height=380)
     with col2:
         he_by_type = (df.groupby('game_type', observed=True)['house_edge']
@@ -42,32 +49,30 @@ def render(df: pd.DataFrame) -> None:
         he_by_type.columns = ['Game Type', 'Mean HE%', 'Median HE%', 'Std']
         he_by_type = he_by_type.sort_values('Mean HE%', ascending=False)
         st.dataframe(he_by_type, width='stretch', hide_index=True)
-        st.caption('Higher mean house edge = casino keeps more per $1 bet.')
+        st.caption('Higher house edge means the casino keeps more per $1 bet.')
 
     # ── RTP by volatility ─────────────────────────────────────────────────────
     st.markdown('## RTP vs Volatility')
     col1, col2 = st.columns(2)
     with col1:
-        fig = px.violin(df, x='volatility', y='rtp',
-                        color='volatility', box=True,
-                        category_orders={'volatility': VOL_ORDER},
-                        color_discrete_sequence=PALETTE,
-                        labels={'rtp': 'RTP (%)', 'volatility': 'Volatility'},
-                        title='RTP Distribution by Volatility (Violin + Box)')
+        rtp_mean = (df.groupby('volatility', observed=True)['rtp']
+                      .mean().reindex(VOL_ORDER).reset_index())
+        rtp_mean.columns = ['Volatility', 'Mean RTP%']
+        fig = px.bar(rtp_mean, x='Volatility', y='Mean RTP%',
+                     color='Mean RTP%', color_continuous_scale='Greens',
+                     text='Mean RTP%',
+                     labels={'Mean RTP%': 'Mean RTP (%)'},
+                     title='Mean RTP by Volatility')
+        fig.update_traces(texttemplate='%{text:.2f}%', textposition='outside')
+        fig.update_coloraxes(showscale=False)
         render_chart(fig, height=350)
     with col2:
         rtp_vol = (df.groupby('volatility', observed=True)['rtp']
                      .agg(['mean', 'median', 'count'])
                      .round(3).reset_index())
         rtp_vol.columns = ['Volatility', 'Mean RTP%', 'Median RTP%', 'Count']
-        fig = px.bar(rtp_vol, x='Volatility', y='Mean RTP%',
-                     color='Mean RTP%', color_continuous_scale='RdYlGn',
-                     category_orders={'Volatility': VOL_ORDER},
-                     range_color=[94, 98], text='Mean RTP%',
-                     title='Mean RTP by Volatility Level')
-        fig.update_traces(texttemplate='%{text:.2f}%', textposition='outside')
-        fig.update_coloraxes(showscale=False)
-        render_chart(fig, height=350)
+        st.dataframe(rtp_vol, width='stretch', hide_index=True)
+        st.caption('Average RTP stays very similar across volatility levels.')
 
     # ── Bonus features vs RTP ─────────────────────────────────────────────────
     st.markdown('## Do Bonus Features Improve Player Odds?')

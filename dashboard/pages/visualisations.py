@@ -46,11 +46,18 @@ def render(df: pd.DataFrame) -> None:
             fig.update_coloraxes(showscale=False)
             render_chart(fig, height=300)
 
-        fig = px.box(df, x='game_type', y='house_edge',
-                     color='game_type', color_discrete_sequence=PALETTE,
-                     title='House Edge Spread by Game Type (Box Plot)',
-                     labels={'house_edge': 'House Edge (%)', 'game_type': 'Game Type'})
-        fig.update_layout(showlegend=False)
+        he_gt = (df.groupby('game_type', observed=True)['house_edge']
+               .mean().round(3).sort_values(ascending=True).reset_index())
+        he_gt.columns = ['Game Type', 'Avg House Edge (%)']
+        fig = px.bar(he_gt, x='Avg House Edge (%)', y='Game Type', orientation='h',
+                 color='Avg House Edge (%)', color_continuous_scale='Reds',
+                 text='Avg House Edge (%)',
+                 title='Average House Edge by Game Type',
+                 labels={'Avg House Edge (%)': 'Average House Edge (%)',
+                     'Game Type': 'Game Type'})
+        fig.update_traces(texttemplate='%{text:.2f}%', textposition='outside')
+        fig.update_coloraxes(showscale=False)
+        fig.update_layout(yaxis=dict(autorange='reversed'))
         render_chart(fig, height=350)
 
     # ── Tab 2: Volatility & Risk ──────────────────────────────────────────────

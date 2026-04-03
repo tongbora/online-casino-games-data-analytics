@@ -110,13 +110,15 @@ def render(df: pd.DataFrame) -> None:
                            title=f'Max Multiplier ≤ 95th pct ({mult_cap:.0f}x)')
         render_chart(fig, height=280)
     with col2:
-        fig = px.box(df, x='volatility', y='max_multiplier',
-                     color='volatility',
-                     category_orders={'volatility': VOL_ORDER},
-                     color_discrete_sequence=PALETTE,
-                     labels={'max_multiplier': 'Max Multiplier (x)', 'volatility': 'Volatility'},
-                     title='Max Multiplier by Volatility (log scale)')
-        fig.update_yaxes(type='log')
+        mult_by_vol = (df.groupby('volatility', observed=True)['max_multiplier']
+                         .median().reindex(VOL_ORDER).reset_index())
+        mult_by_vol.columns = ['Volatility', 'Median Max Multiplier']
+        fig = px.bar(mult_by_vol, x='Volatility', y='Median Max Multiplier',
+                     color_discrete_sequence=[COLORS['purple']],
+                     text='Median Max Multiplier',
+                     labels={'Median Max Multiplier': 'Median Max Multiplier (x)'},
+                     title='Median Max Multiplier by Volatility')
+        fig.update_traces(texttemplate='%{text:.0f}x', textposition='outside')
         render_chart(fig, height=280)
 
     # ── Game Type ─────────────────────────────────────────────────────────────
