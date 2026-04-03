@@ -5,6 +5,7 @@ matplotlib
 seaborn
 plotly
 scikit-learn
+statsmodels
 jupyter
 pyarrow
 streamlit>=1.38,<2

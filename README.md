@@ -9,9 +9,13 @@
 
 ## 📖 About
 
-This project performs a full **Exploratory Data Analysis (EDA)** on the
-[Online Casino Games Dataset (1.2M records)](https://drive.google.com/file/d/1-YkXYX8s3zwu3jqcvGa9kpawOr14rVcP/view?usp=sharing)
-from Google Drive.
+This project is a Streamlit-based **Exploratory Data Analysis (EDA)** dashboard for
+an online casino games dataset hosted on **Google Drive**.
+
+The app is designed to start quickly:
+
+- it loads a **small bundled sample** by default for fast deployment and exploration
+- it can optionally download the **full dataset** from Google Drive when requested
 
 **Research question:**
 > *Does the data support the famous saying — "The House Always Wins"?*
@@ -40,16 +44,23 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### 2. Download the dataset
+### 2. Dataset
 
 ```bash
-# Optional manual download (the app auto-downloads from Google Drive on first run)
+# The app already includes a fast sample dataset.
+# If you want the full dataset locally, download it from Google Drive:
 mkdir -p data/raw
 wget -O data/raw/online_casino_games.csv \
   "https://drive.google.com/uc?export=download&id=1-YkXYX8s3zwu3jqcvGa9kpawOr14rVcP"
 ```
 
-The CSV will be saved to `data/raw/online_casino_games.csv` (~252 MB).
+By default, the dashboard uses the bundled sample file at
+`data/raw/online_casino_games_sample.csv`.
+
+If you switch off **Use sample dataset (fastest)** in the sidebar, the app will
+attempt to download the full CSV from Google Drive and store it at
+`data/raw/online_casino_games.csv`.
+
 Large data files are excluded from git — see `data/README.md`.
 
 ### 3. Launch the Streamlit dashboard
@@ -98,7 +109,8 @@ data-analytics/
 │
 ├── data/
 │   └── raw/
-│       └── online_casino_games.csv # Dataset (gitignored, ~252 MB)
+│       ├── online_casino_games_sample.csv # Small bundled sample for fast startup
+│       └── online_casino_games.csv        # Full dataset (downloaded on demand, gitignored)
 │
 ├── requirements.txt                # Python dependencies
 └── README.md                       # This file
@@ -162,5 +174,6 @@ top10   = top_categories(df, "game_type") # count + share for top N categories
 
 - All charts are purposeful and labelled — each contributes directly to the story.
 - Cleaning decisions are documented in the **1.2 Data Cleaning** dashboard page.
-- The `data/` directory keeps the full dataset out of git, but a small sample ships with the app for fast startup.
-- Toggle **"Use sample dataset (fastest)"** in the sidebar for quick exploration; uncheck for full 1.2M analysis from Google Drive.
+- The bundled sample keeps the app responsive on Streamlit Cloud and local startup.
+- Toggle **"Use sample dataset (fastest)"** in the sidebar for quick exploration; uncheck to load the full 1.2M dataset from Google Drive.
+- On Streamlit Cloud, the full dataset is stored only in the app runtime filesystem and may need to be downloaded again after a restart or redeploy.
