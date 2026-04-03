@@ -16,22 +16,38 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.append(str(ROOT))
 from src.eda.utils import load_csv
 
+SAMPLE_CSV_PATH = ROOT / 'data' / 'raw' / 'online_casino_games_sample.csv'
 CSV_PATH        = Path('/tmp/data/online_casino_games_dataset_v2.csv')
 KAGGLE_DATASET  = 'igormerlinicomposer/online-casino-games-dataset-1-2m-records'  # ← your dataset slug
 KAGGLE_FILENAME = 'online_casino_games_dataset_v2.csv'                               # ← filename inside the zip
-SAMPLE_ROWS     = 200_000
+SAMPLE_ROWS     = 50_000
 
 
-def _ensure_local_csv() -> Path:
-    """Download from Kaggle if not already present in /tmp/data/."""
+def _ensure_local_csv(use_sample: bool = True) -> Path:
+    """Return sample CSV when enabled, otherwise fetch full CSV from Kaggle."""
+    if use_sample:
+        if SAMPLE_CSV_PATH.exists():
+            return SAMPLE_CSV_PATH
+        st.error('❌ Sample dataset is missing from data/raw/online_casino_games_sample.csv.')
+        st.stop()
+
     if CSV_PATH.exists():
         return CSV_PATH
 
     # Set credentials from Streamlit secrets
-    os.environ['KAGGLE_USERNAME'] = st.secrets['kaggle']['username']
-    os.environ['KAGGLE_KEY']      = st.secrets['kaggle']['key']
+    try:
+        os.environ['KAGGLE_USERNAME'] = st.secrets['kaggle']['username']
+        os.environ['KAGGLE_KEY'] = st.secrets['kaggle']['key']
+    except Exception:
+        st.error('❌ Missing Kaggle secrets. Add [kaggle].username and [kaggle].key in Streamlit secrets.')
+        st.stop()
 
-    import kaggle
+    try:
+        import kaggle
+    except Exception:
+        st.error('❌ Kaggle package is not installed. Add `kaggle` to requirements.txt.')
+        st.stop()
+
     kaggle.api.authenticate()
 
     CSV_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -52,7 +68,7 @@ def _ensure_local_csv() -> Path:
 @st.cache_data(show_spinner='⏳ Loading dataset…')
 def load_raw(nrows: int | None = None, use_sample: bool = True) -> pd.DataFrame:
     """Load the raw CSV with optional row limit."""
-    csv_path = _ensure_local_csv()
+    csv_path = _ensure_local_csv(use_sample=use_sample)
     return load_csv(csv_path, nrows=nrows)
 
 

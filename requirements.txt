@@ -9,3 +9,4 @@ jupyter
 pyarrow
 streamlit>=1.38,<2
 gdown
+kaggle
