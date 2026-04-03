@@ -27,6 +27,7 @@ def render(df: pd.DataFrame) -> None:
 
     # ── House edge by game type ───────────────────────────────────────────────
     st.markdown('## House Edge by Game Type')
+    st.markdown('**Question:** Which game type has the highest house edge?')
     col1, col2 = st.columns([2, 1])
     with col1:
         he_summary = (df.groupby('game_type', observed=True)['house_edge']
@@ -53,6 +54,7 @@ def render(df: pd.DataFrame) -> None:
 
     # ── RTP by volatility ─────────────────────────────────────────────────────
     st.markdown('## RTP vs Volatility')
+    st.markdown('**Question:** Does volatility affect RTP?')
     col1, col2 = st.columns(2)
     with col1:
         rtp_mean = (df.groupby('volatility', observed=True)['rtp']
@@ -76,6 +78,7 @@ def render(df: pd.DataFrame) -> None:
 
     # ── Bonus features vs RTP ─────────────────────────────────────────────────
     st.markdown('## Do Bonus Features Improve Player Odds?')
+    st.markdown('**Question:** Does Free Spins or Bonus Buy increase RTP?')
     col1, col2 = st.columns(2)
     with col1:
         bonus_compare = pd.DataFrame({
@@ -103,6 +106,7 @@ def render(df: pd.DataFrame) -> None:
 
     # ── RTP vs Max Multiplier scatter ─────────────────────────────────────────
     st.markdown('## RTP vs Max Multiplier — The Risk-Reward Trade-off')
+    st.markdown('**Question:** Do games with higher max wins have different RTP?')
     sdf = df[df['max_multiplier'] <= df['max_multiplier'].quantile(0.99)].sample(
         min(5000, len(df)), random_state=42)
     fig = px.scatter(sdf, x='rtp', y='max_multiplier',
@@ -124,6 +128,7 @@ def render(df: pd.DataFrame) -> None:
 
     # ── Best / worst providers ────────────────────────────────────────────────
     st.markdown('## Provider Analysis — Who Favours the House Most?')
+    st.markdown('**Question:** Which providers have the highest house edge?')
     prov_he = (df.groupby('provider', observed=True)['house_edge']
                  .agg(['mean', 'count']).reset_index()
                  .rename(columns={'mean': 'Avg House Edge', 'count': 'Games'})
@@ -152,6 +157,7 @@ def render(df: pd.DataFrame) -> None:
 
     # ── Correlation heatmap ───────────────────────────────────────────────────
     st.markdown('## Correlation Matrix — Numeric Variables')
+    st.markdown('**Question:** Are game features connected to RTP or house edge?')
     num_cols = ['rtp', 'house_edge', 'min_bet', 'max_win', 'max_multiplier', 'release_year']
     corr = df[num_cols].corr().round(3)
     fig = px.imshow(corr, text_auto=True,
@@ -167,6 +173,7 @@ def render(df: pd.DataFrame) -> None:
 
     # ── House edge trend over years ───────────────────────────────────────────
     st.markdown('## Has the House Edge Changed Over Time?')
+    st.markdown('**Question:** Is house edge higher in newer games?')
     trend = (df[df['release_year'] >= 2010]
              .groupby('release_year', observed=True)['house_edge']
              .agg(['mean', 'median', 'std']).reset_index())
