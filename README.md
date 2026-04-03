@@ -10,12 +10,12 @@
 ## 📖 About
 
 This project is a Streamlit-based **Exploratory Data Analysis (EDA)** dashboard for
-an online casino games dataset hosted on **Google Drive**.
+an online casino games dataset hosted on **Kaggle**.
 
 The app is designed to start quickly:
 
-- it loads a **small bundled sample** by default for fast deployment and exploration
-- it can optionally download the **full dataset** from Google Drive when requested
+- it loads a **200k sample** by default for fast exploration
+- it can load the **full dataset** when the sample option is turned off
 
 **Research question:**
 > *Does the data support the famous saying — "The House Always Wins"?*
@@ -44,24 +44,25 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### 2. Dataset
+### 2. Configure dataset access
 
 ```bash
-# The app already includes a fast sample dataset.
-# If you want the full dataset locally, download it from Google Drive:
-mkdir -p data/raw
-wget -O data/raw/online_casino_games.csv \
-  "https://drive.google.com/uc?export=download&id=1-YkXYX8s3zwu3jqcvGa9kpawOr14rVcP"
+# Streamlit secrets must contain your Kaggle credentials
+mkdir -p .streamlit
+cat > .streamlit/secrets.toml <<'EOF'
+[kaggle]
+username = "YOUR_KAGGLE_USERNAME"
+key = "YOUR_KAGGLE_API_KEY"
+EOF
 ```
 
-By default, the dashboard uses the bundled sample file at
-`data/raw/online_casino_games_sample.csv`.
+By default, the dashboard loads a **200,000-row sample**.
 
 If you switch off **Use sample dataset (fastest)** in the sidebar, the app will
-attempt to download the full CSV from Google Drive and store it at
-`data/raw/online_casino_games.csv`.
+download the full CSV from Kaggle and store it in the runtime folder:
+`/tmp/data/online_casino_games_dataset_v2.csv`.
 
-Large data files are excluded from git — see `data/README.md`.
+The file is cached locally for the current session only.
 
 ### 3. Launch the Streamlit dashboard
 
@@ -109,8 +110,7 @@ data-analytics/
 │
 ├── data/
 │   └── raw/
-│       ├── online_casino_games_sample.csv # Small bundled sample for fast startup
-│       └── online_casino_games.csv        # Full dataset (downloaded on demand, gitignored)
+│       └── online_casino_games.csv        # Full dataset reference only
 │
 ├── requirements.txt                # Python dependencies
 └── README.md                       # This file
@@ -129,6 +129,7 @@ data-analytics/
 | `matplotlib` | Static plots (notebook) |
 | `seaborn` | Statistical visualisations (notebook) |
 | `scikit-learn` | Trendline computation (OLS regression) |
+| `kaggle` | Download the dataset via Kaggle API |
 | `pyarrow` | Fast CSV/Parquet I/O |
 | `jupyter` | Notebook environment |
 
@@ -174,6 +175,6 @@ top10   = top_categories(df, "game_type") # count + share for top N categories
 
 - All charts are purposeful and labelled — each contributes directly to the story.
 - Cleaning decisions are documented in the **1.2 Data Cleaning** dashboard page.
-- The bundled sample keeps the app responsive on Streamlit Cloud and local startup.
-- Toggle **"Use sample dataset (fastest)"** in the sidebar for quick exploration; uncheck to load the full 1.2M dataset from Google Drive.
-- On Streamlit Cloud, the full dataset is stored only in the app runtime filesystem and may need to be downloaded again after a restart or redeploy.
+- Toggle **"Use sample dataset (fastest)"** in the sidebar for quick exploration; uncheck to load the full 1.2M dataset from Kaggle.
+- On Streamlit Cloud, Kaggle credentials must be configured in Secrets.
+- The downloaded full dataset is stored only in the app runtime filesystem and may need to be fetched again after a restart or redeploy.

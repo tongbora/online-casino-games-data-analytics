@@ -50,7 +50,7 @@ with st.sidebar:
     st.markdown('**Dataset options**')
     use_sample = st.checkbox('Use sample dataset (fastest)', value=True)
     nrows = SAMPLE_ROWS if use_sample else None
-    st.caption(f"{'50,000-row sample' if use_sample else 'Full 1.2 M dataset (downloads from Drive if needed)'}")
+    st.caption(f"{'50,000-row sample' if use_sample else 'Full 1.2 M dataset'}")
 
 # ── Load data ────────────────────────────────────────────────────────────────
 df_raw             = load_raw(nrows, use_sample=use_sample)

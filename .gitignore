@@ -27,3 +27,6 @@ Thumbs.db
 
 # Tools
 *.log
+
+# .gitignore
+.streamlit/secrets.toml

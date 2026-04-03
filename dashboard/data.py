@@ -6,9 +6,9 @@ Both functions are cached so Streamlit only runs them once per session.
 """
 
 from pathlib import Path
+import os
 import sys
 
-import gdown
 import pandas as pd
 import streamlit as st
 
@@ -16,51 +16,43 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.append(str(ROOT))
 from src.eda.utils import load_csv
 
-CSV_PATH = ROOT / 'data' / 'raw' / 'online_casino_games.csv'
-SAMPLE_CSV_PATH = ROOT / 'data' / 'raw' / 'online_casino_games_sample.csv'
-SAMPLE_ROWS = 50_000
-GOOGLE_DRIVE_FILE_ID = '1-YkXYX8s3zwu3jqcvGa9kpawOr14rVcP'
+CSV_PATH        = Path('/tmp/data/online_casino_games_dataset_v2.csv')
+KAGGLE_DATASET  = 'igormerlinicomposer/online-casino-games-dataset-1-2m-records'  # ← your dataset slug
+KAGGLE_FILENAME = 'online_casino_games_dataset_v2.csv'                               # ← filename inside the zip
+SAMPLE_ROWS     = 200_000
 
 
-def _ensure_local_csv(use_sample: bool) -> Path:
-    """Return a local CSV path, downloading the full dataset only when needed."""
-    if use_sample and SAMPLE_CSV_PATH.exists():
-        return SAMPLE_CSV_PATH
-
+def _ensure_local_csv() -> Path:
+    """Download from Kaggle if not already present in /tmp/data/."""
     if CSV_PATH.exists():
         return CSV_PATH
 
-    if use_sample and not SAMPLE_CSV_PATH.exists():
-        st.error('❌ Sample dataset is missing.')
-        st.stop()
+    # Set credentials from Streamlit secrets
+    os.environ['KAGGLE_USERNAME'] = st.secrets['kaggle']['username']
+    os.environ['KAGGLE_KEY']      = st.secrets['kaggle']['key']
 
-    if not use_sample:
-        CSV_PATH.parent.mkdir(parents=True, exist_ok=True)
-        st.info('📥 Downloading the full dataset from Google Drive…')
-        try:
-            url = f'https://drive.google.com/uc?id={GOOGLE_DRIVE_FILE_ID}'
-            gdown.download(url=url, output=str(CSV_PATH), quiet=True, fuzzy=True)
-        except Exception:  # pragma: no cover - streamlit runtime feedback
-            st.error('❌ Dataset preparation failed.')
-            st.stop()
+    import kaggle
+    kaggle.api.authenticate()
 
-        if CSV_PATH.exists():
-            return CSV_PATH
+    CSV_PATH.parent.mkdir(parents=True, exist_ok=True)
+    kaggle.api.dataset_download_files(
+        KAGGLE_DATASET,
+        path=str(CSV_PATH.parent),
+        unzip=True,
+        quiet=True,
+    )
 
+    if not CSV_PATH.exists():
         st.error('❌ Download did not produce the expected CSV file.')
         st.stop()
 
-    if CSV_PATH.exists():
-        return
-
-    st.error('❌ No dataset available locally.')
-    st.stop()
+    return CSV_PATH
 
 
 @st.cache_data(show_spinner='⏳ Loading dataset…')
 def load_raw(nrows: int | None = None, use_sample: bool = True) -> pd.DataFrame:
     """Load the raw CSV with optional row limit."""
-    csv_path = _ensure_local_csv(use_sample=use_sample)
+    csv_path = _ensure_local_csv()
     return load_csv(csv_path, nrows=nrows)
 
 
