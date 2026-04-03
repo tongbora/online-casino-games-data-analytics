@@ -24,6 +24,7 @@ from dashboard.config import (
 )
 from dashboard.data import SAMPLE_ROWS, load_clean, load_raw
 from dashboard.pages import (
+    about_author,
     bivariate,
     data_cleaning,
     data_understanding,
@@ -64,3 +65,4 @@ elif page == SECTIONS[3]: univariate.render(df)
 elif page == SECTIONS[4]: bivariate.render(df)
 elif page == SECTIONS[5]: visualisations.render(df)
 elif page == SECTIONS[6]: insights.render(df)
+elif page == SECTIONS[7]: about_author.render()

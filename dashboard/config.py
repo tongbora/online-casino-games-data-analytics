@@ -29,6 +29,7 @@ SECTIONS = [
     '1.4  Bivariate & Multivariate',
     '1.5  Visualisations Summary',
     '1.6  Key Insights & Conclusion',
+    'About the Authors',
 ]
 
 
@@ -53,6 +54,7 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 
 :root {
     --app-bg: var(--background-color);
+    --blue: #58a6ff;
     --app-bg-accent: color-mix(in srgb, var(--primary-color) 6%, var(--background-color));
     --app-text: var(--text-color);
     --sidebar-bg: color-mix(in srgb, var(--secondary-background-color) 94%, var(--background-color) 6%);
@@ -141,6 +143,121 @@ div[data-testid="stDataFrame"] {
 
 div[data-testid="stDataFrame"] * {
     font-size: 0.95rem;
+}
+
+.team-section {
+    margin-top: 1rem;
+}
+
+.team-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.9rem;
+    margin-top: 0.75rem;
+}
+
+.team-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 18px;
+    padding: 1rem 1.05rem;
+    box-shadow: var(--shadow);
+    display: grid;
+    grid-template-columns: 112px 1fr;
+    align-items: center;
+    gap: 0.9rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.team-avatar {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    margin: 0;
+    display: grid;
+    place-items: center;
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    color: #ffffff;
+    background: linear-gradient(135deg, var(--primary-color), var(--blue));
+    box-shadow: 0 8px 16px color-mix(in srgb, var(--primary-color) 20%, transparent);
+}
+
+.team-photo {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    object-fit: contain;
+    object-position: center;
+    background: color-mix(in srgb, var(--secondary-background-color) 88%, var(--background-color) 12%);
+    margin: 0;
+    display: block;
+    border: 2px solid var(--blue, #58a6ff);
+    box-shadow: 0 8px 16px color-mix(in srgb, var(--primary-color) 18%, transparent);
+}
+
+.team-photo-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.team-photo-wrap::before {
+    content: '';
+    position: absolute;
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    border-left-color: var(--blue, #58a6ff);
+    border-top-color: var(--blue, #58a6ff);
+    border-bottom-color: var(--blue, #58a6ff);
+    opacity: 0.95;
+    pointer-events: none;
+}
+
+.team-content {
+    min-width: 0;
+}
+
+.team-name {
+    font-size: 1.7rem;
+    font-weight: 800;
+    margin: 0;
+    line-height: 1.05;
+    color: var(--text-color);
+}
+
+.team-role {
+    margin: 0.2rem 0 0.5rem;
+    color: var(--blue, #58a6ff);
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.team-bio {
+    margin: 0;
+    color: var(--muted-text);
+    line-height: 1.5;
+    font-size: 0.92rem;
+}
+
+@media (max-width: 720px) {
+    .team-card {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .team-name {
+        font-size: 1.4rem;
+    }
+
+    .team-role {
+        margin-bottom: 0.4rem;
+    }
 }
 
 h1, h2, h3, h4, h5, h6 {

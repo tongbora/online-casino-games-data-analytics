@@ -19,7 +19,7 @@ from src.eda.utils import load_csv
 SAMPLE_CSV_PATH = ROOT / 'data' / 'raw' / 'online_casino_games_sample.csv'
 CSV_PATH        = Path('/tmp/data/online_casino_games_dataset_v2.csv')
 KAGGLE_DATASET  = 'igormerlinicomposer/online-casino-games-dataset-1-2m-records'  # ← your dataset slug
-KAGGLE_FILENAME = 'online_casino_games_dataset_v2.csv'                               # ← filename inside the zip
+KAGGLE_FILENAME = 'online9_casino_games_dataset_v2.csv'                               # ← filename inside the zip
 SAMPLE_ROWS     = 50_000
 
 
