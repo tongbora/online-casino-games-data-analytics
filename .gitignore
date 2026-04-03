@@ -14,7 +14,11 @@ __pycache__/
 
 # Data and outputs
 /data/
-!data/README.md
+!/data/
+!/data/README.md
+!/data/raw/
+data/raw/*
+!data/raw/online_casino_games_sample.csv
 outputs/
 
 # OS files

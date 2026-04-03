@@ -22,7 +22,7 @@ from dashboard.config import (
     configure_page,
     inject_css,
 )
-from dashboard.data import CSV_PATH, load_clean, load_raw
+from dashboard.data import SAMPLE_ROWS, load_clean, load_raw
 from dashboard.pages import (
     bivariate,
     data_cleaning,
@@ -48,13 +48,13 @@ with st.sidebar:
 
     st.divider()
     st.markdown('**Dataset options**')
-    use_sample = st.checkbox('Use 200 k sample (faster)', value=True)
-    nrows = 200_000 if use_sample else None
-    st.caption(f"{'200,000 rows' if use_sample else 'Full 1.2 M dataset'}")
+    use_sample = st.checkbox('Use sample dataset (fastest)', value=True)
+    nrows = SAMPLE_ROWS if use_sample else None
+    st.caption(f"{'50,000-row sample' if use_sample else 'Full 1.2 M dataset (downloads from Drive if needed)'}")
 
 # ── Load data ────────────────────────────────────────────────────────────────
-df_raw             = load_raw(nrows)
-df, cleaning_log   = load_clean(nrows)
+df_raw             = load_raw(nrows, use_sample=use_sample)
+df, cleaning_log   = load_clean(nrows, use_sample=use_sample)
 
 # ── Route to page ─────────────────────────────────────────────────────────────
 if   page == SECTIONS[0]: introduction.render(df, df_raw)

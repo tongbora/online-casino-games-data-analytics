@@ -8,83 +8,64 @@ Both functions are cached so Streamlit only runs them once per session.
 from pathlib import Path
 import sys
 
+import gdown
 import pandas as pd
 import streamlit as st
-from kaggle.api.kaggle_api_extended import KaggleApi
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.append(str(ROOT))
 from src.eda.utils import load_csv
 
 CSV_PATH = ROOT / 'data' / 'raw' / 'online_casino_games.csv'
-KAGGLE_DATASET = 'igormerlinicomposer/online-casino-games-dataset-1-2m-records'
-KAGGLE_CSV_CANDIDATES = [
-    'online_casino_games_dataset_v2.csv',
-    'online_casino_games_dataset.csv',
-    'online_casino_games_dataset_1_2m_records.csv',
-]
+SAMPLE_CSV_PATH = ROOT / 'data' / 'raw' / 'online_casino_games_sample.csv'
+SAMPLE_ROWS = 50_000
+GOOGLE_DRIVE_FILE_ID = '1-YkXYX8s3zwu3jqcvGa9kpawOr14rVcP'
 
 
-def _ensure_local_csv() -> None:
-    """Download the dataset from Kaggle if it is not already present locally."""
+def _ensure_local_csv(use_sample: bool) -> Path:
+    """Return a local CSV path, downloading the full dataset only when needed."""
+    if use_sample and SAMPLE_CSV_PATH.exists():
+        return SAMPLE_CSV_PATH
+
     if CSV_PATH.exists():
-        return
+        return CSV_PATH
 
-    CSV_PATH.parent.mkdir(parents=True, exist_ok=True)
-    st.info('📥 Preparing dataset…')
-
-    try:
-        api = KaggleApi()
-        api.authenticate()
-
-        # Try direct file download for known names
-        for fname in KAGGLE_CSV_CANDIDATES:
-            try:
-                api.dataset_download_file(
-                    KAGGLE_DATASET,
-                    fname,
-                    path=str(CSV_PATH.parent),
-                    force=True,
-                    quiet=True,
-                )
-                candidate_path = CSV_PATH.parent / fname
-                if candidate_path.exists():
-                    candidate_path.rename(CSV_PATH)
-                    break
-            except Exception:
-                continue
-
-        # If still missing, fetch all and unzip, then pick a CSV
-        if not CSV_PATH.exists():
-            api.dataset_download_files(
-                KAGGLE_DATASET,
-                path=str(CSV_PATH.parent),
-                unzip=True,
-                force=True,
-                quiet=True,
-            )
-            csv_files = sorted(CSV_PATH.parent.glob('*.csv'))
-            if csv_files:
-                csv_files[0].rename(CSV_PATH)
-
-    except Exception:  # pragma: no cover - streamlit runtime feedback
-        st.error('❌ Dataset preparation failed.')
+    if use_sample and not SAMPLE_CSV_PATH.exists():
+        st.error('❌ Sample dataset is missing.')
         st.stop()
 
-    if not CSV_PATH.exists():
+    if not use_sample:
+        CSV_PATH.parent.mkdir(parents=True, exist_ok=True)
+        st.info('📥 Downloading the full dataset from Google Drive…')
+        try:
+            url = f'https://drive.google.com/uc?id={GOOGLE_DRIVE_FILE_ID}'
+            gdown.download(url=url, output=str(CSV_PATH), quiet=True, fuzzy=True)
+        except Exception:  # pragma: no cover - streamlit runtime feedback
+            st.error('❌ Dataset preparation failed.')
+            st.stop()
+
+        if CSV_PATH.exists():
+            return CSV_PATH
+
         st.error('❌ Download did not produce the expected CSV file.')
         st.stop()
 
+    if CSV_PATH.exists():
+        return
+
+    st.error('❌ No dataset available locally.')
+    st.stop()
+
 
 @st.cache_data(show_spinner='⏳ Loading dataset…')
-def load_raw(nrows: int | None = None) -> pd.DataFrame:
+def load_raw(nrows: int | None = None, use_sample: bool = True) -> pd.DataFrame:
     """Load the raw CSV with optional row limit."""
-    _ensure_local_csv()
-    return load_csv(CSV_PATH, nrows=nrows)
+    csv_path = _ensure_local_csv(use_sample=use_sample)
+    return load_csv(csv_path, nrows=nrows)
 
 
 @st.cache_data(show_spinner='⚙️ Cleaning data…')
-def load_clean(nrows: int | None = None) -> tuple[pd.DataFrame, list[tuple]]:
+def load_clean(nrows: int | None = None, use_sample: bool = True) -> tuple[pd.DataFrame, list[tuple]]:
     """
     Return the cleaned DataFrame and a log of cleaning steps.
 
@@ -98,7 +79,7 @@ def load_clean(nrows: int | None = None) -> tuple[pd.DataFrame, list[tuple]]:
     6. Make `volatility` an ordered Categorical
     7. Parse `last_updated` as datetime
     """
-    df = load_raw(nrows)
+    df = load_raw(nrows, use_sample=use_sample)
     log: list[tuple[str, str, str]] = []     # (action, justification, icon)
 
     # 1 ── drop jackpot

@@ -10,8 +10,8 @@
 ## 📖 About
 
 This project performs a full **Exploratory Data Analysis (EDA)** on the
-[Online Casino Games Dataset (1.2M records)](https://www.kaggle.com/datasets/igormerlinicomposer/online-casino-games-dataset-1-2m-records)
-from Kaggle.
+[Online Casino Games Dataset (1.2M records)](https://drive.google.com/file/d/1-YkXYX8s3zwu3jqcvGa9kpawOr14rVcP/view?usp=sharing)
+from Google Drive.
 
 **Research question:**
 > *Does the data support the famous saying — "The House Always Wins"?*
@@ -43,10 +43,10 @@ pip install -r requirements.txt
 ### 2. Download the dataset
 
 ```bash
-# Requires a Kaggle account & API token (~/.kaggle/kaggle.json)
-kaggle datasets download \
-  -d igormerlinicomposer/online-casino-games-dataset-1-2m-records \
-  -p data/raw --unzip
+# Optional manual download (the app auto-downloads from Google Drive on first run)
+mkdir -p data/raw
+wget -O data/raw/online_casino_games.csv \
+  "https://drive.google.com/uc?export=download&id=1-YkXYX8s3zwu3jqcvGa9kpawOr14rVcP"
 ```
 
 The CSV will be saved to `data/raw/online_casino_games.csv` (~252 MB).
@@ -162,5 +162,5 @@ top10   = top_categories(df, "game_type") # count + share for top N categories
 
 - All charts are purposeful and labelled — each contributes directly to the story.
 - Cleaning decisions are documented in the **1.2 Data Cleaning** dashboard page.
-- The `data/` directory is gitignored; download the dataset locally before running.
-- Toggle **"Use 200k sample"** in the sidebar for faster exploration; uncheck for full 1.2M analysis.
+- The `data/` directory keeps the full dataset out of git, but a small sample ships with the app for fast startup.
+- Toggle **"Use sample dataset (fastest)"** in the sidebar for quick exploration; uncheck for full 1.2M analysis from Google Drive.
