@@ -5,6 +5,12 @@
 
 **Phnom Penh International University · Data Analytics · 2026**
 
+## 🌐 Live Dashboard
+
+https://online-casino-games-group-06.streamlit.app/
+
+Sample dataset (default): **50,000 rows**
+
 ---
 
 ## 📖 About
@@ -14,7 +20,7 @@ an online casino games dataset hosted on **Kaggle**.
 
 The app is designed to start quickly:
 
-- it loads a **200k sample** by default for fast exploration
+- it loads a **50k sample** by default for fast exploration
 - it can load the **full dataset** when the sample option is turned off
 
 **Research question:**
@@ -56,7 +62,7 @@ key = "YOUR_KAGGLE_API_KEY"
 EOF
 ```
 
-By default, the dashboard loads a **200,000-row sample**.
+By default, the dashboard loads a **50,000-row sample**.
 
 If you switch off **Use sample dataset (fastest)** in the sidebar, the app will
 download the full CSV from Kaggle and store it in the runtime folder:
