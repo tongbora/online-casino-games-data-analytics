@@ -11,6 +11,12 @@ import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 
+try:
+    import statsmodels.api as sm  # noqa: F401
+    HAS_STATSMODELS = True
+except Exception:
+    HAS_STATSMODELS = False
+
 from dashboard.config import COLORS, PALETTE, VOL_ORDER, badge, render_chart, theme
 
 
@@ -102,8 +108,10 @@ def render(df: pd.DataFrame) -> None:
                      labels={'rtp': 'RTP (%)', 'max_multiplier': 'Max Multiplier (x)',
                              'volatility': 'Volatility'},
                      title='RTP vs Max Multiplier (sample 5,000, coloured by volatility)',
-                     trendline='ols')
+                     trendline='ols' if HAS_STATSMODELS else None)
     render_chart(fig, height=400)
+    if not HAS_STATSMODELS:
+        st.caption('Trendline disabled: install `statsmodels` in the runtime environment.')
     st.caption(
         'High-volatility games offer bigger multipliers but similar RTP — '
         'you can win big occasionally, the house edge stays the same.'

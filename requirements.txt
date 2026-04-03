@@ -4,6 +4,7 @@ numpy
 matplotlib
 seaborn
 plotly
+statsmodels
 scikit-learn
 jupyter
 pyarrow
