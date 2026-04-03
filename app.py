@@ -52,9 +52,6 @@ with st.sidebar:
     nrows = 200_000 if use_sample else None
     st.caption(f"{'200,000 rows' if use_sample else 'Full 1.2 M dataset'}")
 
-    if not CSV_PATH.exists():
-        st.info('📥 Dataset will be downloaded from Kaggle (not present in data/raw/).')
-
 # ── Load data ────────────────────────────────────────────────────────────────
 df_raw             = load_raw(nrows)
 df, cleaning_log   = load_clean(nrows)

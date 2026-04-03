@@ -31,7 +31,7 @@ def _ensure_local_csv() -> None:
         return
 
     CSV_PATH.parent.mkdir(parents=True, exist_ok=True)
-    st.info('📥 Downloading dataset from Kaggle…')
+    st.info('📥 Preparing dataset…')
 
     try:
         api = KaggleApi()
@@ -67,8 +67,8 @@ def _ensure_local_csv() -> None:
             if csv_files:
                 csv_files[0].rename(CSV_PATH)
 
-    except Exception as exc:  # pragma: no cover - streamlit runtime feedback
-        st.error(f'❌ Kaggle download failed: {exc}')
+    except Exception:  # pragma: no cover - streamlit runtime feedback
+        st.error('❌ Dataset preparation failed.')
         st.stop()
 
     if not CSV_PATH.exists():

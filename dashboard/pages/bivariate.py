@@ -35,7 +35,7 @@ def render(df: pd.DataFrame) -> None:
                         .round(3).reset_index())
         he_by_type.columns = ['Game Type', 'Mean HE%', 'Median HE%', 'Std']
         he_by_type = he_by_type.sort_values('Mean HE%', ascending=False)
-        st.dataframe(he_by_type, use_container_width=True, hide_index=True)
+        st.dataframe(he_by_type, width='stretch', hide_index=True)
         st.caption('Higher mean house edge = casino keeps more per $1 bet.')
 
     # ── RTP by volatility ─────────────────────────────────────────────────────
@@ -84,7 +84,7 @@ def render(df: pd.DataFrame) -> None:
         fig.update_coloraxes(showscale=False)
         render_chart(fig, height=330)
     with col2:
-        st.dataframe(bonus_compare, use_container_width=True, hide_index=True)
+        st.dataframe(bonus_compare, width='stretch', hide_index=True)
         st.caption(
             'The difference is < 0.1 pp. Bonus features are marketing tools, '
             'not genuine RTP improvements.'

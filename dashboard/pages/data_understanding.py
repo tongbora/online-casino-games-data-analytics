@@ -53,7 +53,7 @@ def render(df: pd.DataFrame, df_raw: pd.DataFrame) -> None:
     # ── Variable descriptions ─────────────────────────────────────────────────
     st.markdown('### Variable Descriptions')
     var_df = pd.DataFrame(VAR_DESC, columns=['Column', 'Type', 'Description'])
-    st.dataframe(var_df, use_container_width=True, hide_index=True,
+    st.dataframe(var_df, width='stretch', hide_index=True,
                  column_config={'Column': st.column_config.TextColumn(width='medium')})
     st.caption('⭐ = key variables used in this analysis')
 
@@ -68,7 +68,7 @@ def render(df: pd.DataFrame, df_raw: pd.DataFrame) -> None:
         mv_df = mv_df[mv_df['Missing Count'] > 0]
 
         if len(mv_df):
-            st.dataframe(mv_df, use_container_width=True)
+            st.dataframe(mv_df, width='stretch')
             fig = px.bar(
                 mv_df.reset_index(), x='index', y='Missing %',
                 color='Missing %', color_continuous_scale='Reds',
@@ -102,7 +102,7 @@ def render(df: pd.DataFrame, df_raw: pd.DataFrame) -> None:
     stats = df_raw[key_cols].describe(percentiles=[0.05, 0.25, 0.5, 0.75, 0.95]).T
     stats.index.name = 'Variable'
     stats = stats.rename(columns={'50%': 'median', 'count': 'n'})
-    st.dataframe(stats.round(2), use_container_width=True)
+    st.dataframe(stats.round(2), width='stretch')
 
     col1, col2 = st.columns(2)
     with col1:
@@ -118,11 +118,11 @@ def render(df: pd.DataFrame, df_raw: pd.DataFrame) -> None:
                 100 - df_raw['rtp'].min(),
             ],
         })
-        st.dataframe(he_table.round(3), use_container_width=True, hide_index=True)
+        st.dataframe(he_table.round(3), width='stretch', hide_index=True)
 
     with col2:
         st.markdown('### Game Type Counts')
         gt = df_raw['game_type'].value_counts().reset_index()
         gt.columns = ['Game Type', 'Count']
         gt['% Share'] = (gt['Count'] / gt['Count'].sum() * 100).round(1)
-        st.dataframe(gt, use_container_width=True, hide_index=True)
+        st.dataframe(gt, width='stretch', hide_index=True)

@@ -64,7 +64,7 @@ def render(df: pd.DataFrame) -> None:
         vol_counts = df['volatility'].value_counts().reindex(VOL_ORDER).reset_index()
         vol_counts.columns = ['Volatility', 'Count']
         vol_counts['%'] = (vol_counts['Count'] / vol_counts['Count'].sum() * 100).round(1)
-        st.dataframe(vol_counts, use_container_width=True, hide_index=True)
+        st.dataframe(vol_counts, width='stretch', hide_index=True)
     with col2:
         fig = px.bar(vol_counts, x='Volatility', y='Count',
                      color='Count', color_continuous_scale='YlOrRd',

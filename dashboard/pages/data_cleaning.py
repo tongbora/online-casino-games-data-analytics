@@ -46,7 +46,7 @@ support the "House Always Wins?" narrative.
         ('win_to_bet_ratio_capped','float64', 'clip(0, 99th pct)',
          'Outlier-capped version used in visualisations only'),
     ], columns=['Feature', 'Type', 'Formula', 'Purpose'])
-    st.dataframe(eng, use_container_width=True, hide_index=True)
+    st.dataframe(eng, width='stretch', hide_index=True)
 
     # ── Sample verification ───────────────────────────────────────────────────
     st.markdown('## Cleaned Dataset Sample')
@@ -55,7 +55,7 @@ support the "House Always Wins?" narrative.
         'min_bet', 'max_win', 'win_to_bet_ratio', 'max_multiplier',
         'free_spins_feature', 'bonus_buy_available',
     ]
-    st.dataframe(df[show_cols].head(20), use_container_width=True)
+    st.dataframe(df[show_cols].head(20), width='stretch')
 
     # ── Quality check ─────────────────────────────────────────────────────────
     col1, col2 = st.columns(2)
