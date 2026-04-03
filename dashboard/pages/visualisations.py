@@ -64,31 +64,31 @@ def render(df: pd.DataFrame) -> None:
     with tab2:
         col1, col2 = st.columns(2)
         with col1:
-            fig = px.violin(df, x='volatility', y='house_edge',
-                            color='volatility', box=True,
-                            category_orders={'volatility': VOL_ORDER},
-                            color_discrete_sequence=PALETTE,
-                            title='House Edge by Volatility',
-                            labels={'house_edge': 'House Edge (%)'})
+            he_vol = (df.groupby('volatility', observed=True)['house_edge'].mean()
+                        .reindex(VOL_ORDER).reset_index())
+            he_vol.columns = ['Volatility', 'Mean House Edge (%)']
+            fig = px.bar(he_vol, x='Volatility', y='Mean House Edge (%)',
+                         color='Mean House Edge (%)', color_continuous_scale='Reds',
+                         text='Mean House Edge (%)',
+                         title='Mean House Edge by Volatility')
+            fig.update_traces(texttemplate='%{text:.2f}%', textposition='outside')
+            fig.update_coloraxes(showscale=False)
             render_chart(fig, height=320)
         with col2:
-            fig = px.density_heatmap(df, x='volatility', y='game_type',
-                                     z='house_edge', histfunc='avg',
-                                     color_continuous_scale='YlOrRd',
-                                     category_orders={'volatility': VOL_ORDER},
-                                     title='Avg House Edge: Volatility × Game Type',
-                                     labels={'house_edge': 'Avg House Edge (%)'})
-            render_chart(fig, height=320)
+            he_vol_gt = (df.groupby(['volatility', 'game_type'], observed=True)['house_edge']
+                           .mean().reset_index())
+            pivot_table = he_vol_gt.pivot(index='game_type', columns='volatility', values='house_edge').round(2)
+            pivot_table = pivot_table[[c for c in VOL_ORDER if c in pivot_table.columns]]
+            st.dataframe(pivot_table, use_container_width=True)
+            st.caption('Mean house edge for each combination')
 
-        sdf = df[df['max_multiplier'] <= df['max_multiplier'].quantile(0.98)].sample(
-            min(3000, len(df)), random_state=42)
-        fig = px.scatter(sdf, x='house_edge', y='max_multiplier',
-                         color='volatility', opacity=0.5,
-                         category_orders={'volatility': VOL_ORDER},
-                         color_discrete_sequence=PALETTE,
-                         labels={'house_edge': 'House Edge (%)',
-                                 'max_multiplier': 'Max Multiplier (x)'},
-                         title='House Edge vs Max Multiplier (coloured by volatility)')
+        he_mm = df.groupby('volatility', observed=True)['max_multiplier'].mean().reindex(VOL_ORDER).reset_index()
+        he_mm.columns = ['Volatility', 'Mean Max Multiplier']
+        fig = px.bar(he_mm, x='Volatility', y='Mean Max Multiplier',
+                     color_discrete_sequence=[COLORS['purple']],
+                     text='Mean Max Multiplier',
+                     title='Mean Max Multiplier by Volatility')
+        fig.update_traces(texttemplate='%{text:.0f}x', textposition='outside')
         render_chart(fig, height=360)
 
     # ── Tab 3: Game Types ─────────────────────────────────────────────────────
@@ -103,9 +103,14 @@ def render(df: pd.DataFrame) -> None:
             fig.update_traces(textinfo='label+percent')
             render_chart(fig, height=320)
         with col2:
-            fig = px.treemap(df, path=['game_type', 'game_category'],
-                             title='Game Category Hierarchy (Treemap)',
-                             color_discrete_sequence=PALETTE)
+            gc_cnt = df['game_category'].value_counts().head(15).reset_index()
+            gc_cnt.columns = ['Category', 'Count']
+            fig = px.bar(gc_cnt, x='Category', y='Count',
+                         color='Count', color_continuous_scale='Blues',
+                         text='Count',
+                         title='Top 15 Game Categories by Count')
+            fig.update_traces(texttemplate='%{text}', textposition='outside')
+            fig.update_coloraxes(showscale=False)
             render_chart(fig, height=320)
 
         cat_he = (df.groupby('game_category', observed=True)['house_edge']
