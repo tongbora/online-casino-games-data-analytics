@@ -13,15 +13,14 @@ from dashboard.config import badge
 
 
 def render(df: pd.DataFrame, cleaning_log: list) -> None:
-    st.title('1.2  Data Cleaning & Preparation')
+    st.title('1.2  Clean the Data')
     badge('EDA REQUIREMENT 1.2')
 
     st.markdown("""
 ## Overview
 
-The raw dataset was generally clean. The main tasks were **removing an unusable
-column**, **handling sparse rows**, and **engineering features** that directly
-support the "House Always Wins?" narrative.
+The data was already in decent shape. The main tasks were to remove low-quality
+parts, clean incomplete rows, and add a few useful columns for this story.
     """)
 
     # ── Row counts ────────────────────────────────────────────────────────────
@@ -37,19 +36,19 @@ support the "House Always Wins?" narrative.
 </div>""", unsafe_allow_html=True)
 
     # ── Engineered features ───────────────────────────────────────────────────
-    st.markdown('## Engineered Features')
+    st.markdown('## Added Columns')
     eng = pd.DataFrame([
         ('house_edge',             'float64', '100 − rtp',
-         'Core measure of casino advantage per unit bet'),
+            'Shows how much the casino keeps from each $1 bet'),
         ('win_to_bet_ratio',       'float64', 'max_win / min_bet',
-         'Maximum potential return relative to entry stake'),
+            'Compares top possible win with the minimum bet'),
         ('win_to_bet_ratio_capped','float64', 'clip(0, 99th pct)',
-         'Outlier-capped version used in visualisations only'),
+            'Same value, but limited so charts are easier to read'),
     ], columns=['Feature', 'Type', 'Formula', 'Purpose'])
     st.dataframe(eng, width='stretch', hide_index=True)
 
     # ── Sample verification ───────────────────────────────────────────────────
-    st.markdown('## Cleaned Dataset Sample')
+    st.markdown('## Sample of the Clean Data')
     show_cols = [
         'game', 'game_type', 'rtp', 'house_edge', 'volatility',
         'min_bet', 'max_win', 'win_to_bet_ratio', 'max_multiplier',
@@ -63,7 +62,7 @@ support the "House Always Wins?" narrative.
         nulls = df[show_cols].isnull().sum()
         nulls = nulls[nulls > 0]
         if len(nulls):
-            st.warning(f'Remaining nulls in shown columns: {nulls.to_dict()}')
+            st.warning(f'Still missing values in shown columns: {nulls.to_dict()}')
         else:
             st.success('✅ No missing values in key columns after cleaning.')
     with col2:

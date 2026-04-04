@@ -14,13 +14,13 @@ from dashboard.config import COLORS, PALETTE, VOL_ORDER, badge, render_chart
 
 
 def render(df: pd.DataFrame) -> None:
-    st.title('1.3  Univariate Analysis')
+    st.title('1.3  One-Thing-at-a-Time View')
     badge('EDA REQUIREMENT 1.3')
-    st.markdown('*Distributions of key variables relevant to the story.*')
+    st.markdown('*Simple charts that look at one value at a time.*')
 
     # ── RTP ───────────────────────────────────────────────────────────────────
-    st.markdown('## Return to Player (RTP) Distribution')
-    st.markdown('**Question:** What is the typical RTP value?')
+    st.markdown('## RTP Distribution')
+    st.markdown('**Question:** What RTP value is most common?')
     col1, col2 = st.columns([2, 1])
     with col1:
         fig = px.histogram(df, x='rtp', nbins=50,
@@ -39,17 +39,17 @@ def render(df: pd.DataFrame) -> None:
     with col2:
         st.metric('Mean RTP',   f"{df['rtp'].mean():.2f}%")
         st.metric('Median RTP', f"{df['rtp'].median():.2f}%")
-        st.metric('Std Dev',    f"{df['rtp'].std():.2f}%")
+        st.metric('Spread',     f"{df['rtp'].std():.2f}%")
         st.metric('Min RTP',    f"{df['rtp'].min():.2f}%")
         st.metric('Max RTP',    f"{df['rtp'].max():.2f}%")
         st.markdown("""
-> **Interpretation:** Most games cluster at 95–99 % RTP. A mean of ~96.2 %
-> means the house keeps an average of **3.8 ¢ per $1 bet**.
+> **What this means:** Most games sit around 95–99% RTP. With an average near
+> 96.2%, the casino keeps about **3.8 cents for every $1 bet**.
         """)
 
     # ── House Edge ────────────────────────────────────────────────────────────
     st.markdown('## House Edge Distribution (100 − RTP)')
-    st.markdown('**Question:** What percentage does the casino keep?')
+    st.markdown('**Question:** How much does the casino keep?')
     fig = px.histogram(df, x='house_edge', nbins=50,
                        color_discrete_sequence=[COLORS['red']],
                        labels={'house_edge': 'House Edge (%)', 'count': 'Games'},
@@ -61,7 +61,7 @@ def render(df: pd.DataFrame) -> None:
 
     # ── Volatility ────────────────────────────────────────────────────────────
     st.markdown('## Volatility Distribution')
-    st.markdown('**Question:** How many games are in each risk level?')
+    st.markdown('**Question:** How many games are in each risk group?')
     col1, col2 = st.columns([1, 2])
     with col1:
         vol_counts = df['volatility'].value_counts().reindex(VOL_ORDER).reset_index()
@@ -80,14 +80,14 @@ def render(df: pd.DataFrame) -> None:
 
     # ── Min Bet ───────────────────────────────────────────────────────────────
     st.markdown('## Minimum Bet Distribution')
-    st.markdown('**Question:** What are typical minimum bets?')
+    st.markdown('**Question:** What minimum bet is most common?')
     col1, col2 = st.columns(2)
     with col1:
         cap99 = df['min_bet'].quantile(0.99)
         fig = px.histogram(df[df['min_bet'] <= cap99], x='min_bet', nbins=40,
                            color_discrete_sequence=[COLORS['green']],
                            labels={'min_bet': 'Minimum Bet ($)'},
-                           title='Min Bet Distribution (capped at 99th pct)')
+                           title='Min Bet Distribution (top 1% trimmed for clarity)')
         render_chart(fig, height=280)
     with col2:
         bet_bins = pd.cut(df['min_bet'],
@@ -104,7 +104,7 @@ def render(df: pd.DataFrame) -> None:
 
     # ── Max Multiplier ────────────────────────────────────────────────────────
     st.markdown('## Max Multiplier Distribution')
-    st.markdown('**Question:** What are typical maximum win multipliers?')
+    st.markdown('**Question:** How big can top wins get?')
     col1, col2 = st.columns(2)
     with col1:
         mult_cap = df['max_multiplier'].quantile(0.95)
@@ -128,7 +128,7 @@ def render(df: pd.DataFrame) -> None:
 
     # ── Game Type ─────────────────────────────────────────────────────────────
     st.markdown('## Game Type Distribution')
-    st.markdown('**Question:** Which game types are most common?')
+    st.markdown('**Question:** Which game types appear most often?')
     gt = df['game_type'].value_counts().reset_index()
     gt.columns = ['Game Type', 'Count']
     gt['%'] = (gt['Count'] / gt['Count'].sum() * 100).round(1)

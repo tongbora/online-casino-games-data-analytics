@@ -41,17 +41,17 @@ inject_css()
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
     st.markdown('## 🃏 The House Always Wins?')
-    st.markdown('**PPIU — Data Analytics EDA**')
+    st.markdown('**PPIU — Data Story Dashboard**')
     st.caption('Story Angle #2')
     st.divider()
 
     page = st.radio('Navigate', SECTIONS, label_visibility='collapsed')
 
     st.divider()
-    st.markdown('**Dataset options**')
-    use_sample = st.checkbox('Use sample dataset (fastest)', value=True)
+    st.markdown('**Data size**')
+    use_sample = st.checkbox('Use smaller sample (loads faster)', value=True)
     nrows = SAMPLE_ROWS if use_sample else None
-    st.caption(f"{'50,000-row sample' if use_sample else 'Full 1.2 M dataset'}")
+    st.caption(f"{'50,000 rows (quick view)' if use_sample else 'Full 1.2 million rows'}")
 
 # ── Load data ────────────────────────────────────────────────────────────────
 df_raw             = load_raw(nrows, use_sample=use_sample)

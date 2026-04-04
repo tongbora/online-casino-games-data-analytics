@@ -17,48 +17,48 @@ from dashboard.config import COLORS, PALETTE, badge, render_chart
 VAR_DESC = [
     ('casino',               'object',  'Casino platform name'),
     ('game',                 'object',  'Name of the game'),
-    ('provider',             'object',  'Software developer / game provider'),
-    ('rtp',                  'float64', 'Return to Player % — % of bets paid back over time ⭐'),
+    ('provider',             'object',  'Company that made the game'),
+    ('rtp',                  'float64', 'Percent of bets paid back to players over time ⭐'),
     ('volatility',           'object',  'Risk level: Low / Medium / High / Very High ⭐'),
-    ('jackpot',              'float64', 'Jackpot prize (89% missing — dropped in cleaning)'),
-    ('country_availability', 'object',  'Pipe-separated ISO country codes game is available in'),
+    ('jackpot',              'float64', 'Jackpot amount (mostly empty, removed later)'),
+    ('country_availability', 'object',  'Countries where the game is available'),
     ('min_bet',              'float64', 'Minimum bet amount ⭐'),
     ('max_win',              'float64', 'Maximum possible win amount ⭐'),
-    ('game_type',            'object',  'High-level type: slot, poker, table, live, crash, bingo, scratch ⭐'),
-    ('game_category',        'object',  'Detailed sub-category (e.g., Video Slot, Megaways)'),
-    ('license_jurisdiction', 'object',  'Regulatory license authority'),
+    ('game_type',            'object',  'Main type: slot, poker, table, live, crash, bingo, scratch ⭐'),
+    ('game_category',        'object',  'More specific category (example: Video Slot)'),
+    ('license_jurisdiction', 'object',  'License authority'),
     ('release_year',         'int64',   'Year the game was released'),
-    ('currency',             'object',  'Accepted currencies (pipe-separated)'),
+    ('currency',             'object',  'Accepted currencies'),
     ('mobile_compatible',    'bool',    'Whether the game runs on mobile'),
-    ('free_spins_feature',   'bool',    'Whether free spins bonus is available ⭐'),
-    ('bonus_buy_available',  'bool',    'Whether players can buy into the bonus round ⭐'),
+    ('free_spins_feature',   'bool',    'Whether free spins are available ⭐'),
+    ('bonus_buy_available',  'bool',    'Whether players can buy into a bonus round ⭐'),
     ('max_multiplier',       'float64', 'Maximum win multiplier ⭐'),
-    ('languages',            'object',  'Supported languages (pipe-separated)'),
-    ('last_updated',         'object',  'Date the game record was last updated'),
+    ('languages',            'object',  'Supported languages'),
+    ('last_updated',         'object',  'Last update date for the game record'),
 ]
 
 
 def render(df: pd.DataFrame, df_raw: pd.DataFrame) -> None:
-    st.title('1.1  Data Understanding')
+    st.title('1.1  Understand the Data')
     badge('EDA REQUIREMENT 1.1')
 
     # ── Dimensions ────────────────────────────────────────────────────────────
-    st.markdown('## Dataset Dimensions & Variable Types')
+    st.markdown('## What Is in This Dataset?')
     c1, c2, c3, c4 = st.columns(4)
-    c1.metric('Rows (sample)',     f"{len(df_raw):,}")
+    c1.metric('Rows loaded',       f"{len(df_raw):,}")
     c2.metric('Columns',           f"{df_raw.shape[1]}")
     c3.metric('Numeric columns',   f"{df_raw.select_dtypes('number').shape[1]}")
-    c4.metric('Categorical cols',  f"{df_raw.select_dtypes('object').shape[1]}")
+    c4.metric('Text columns',      f"{df_raw.select_dtypes('object').shape[1]}")
 
     # ── Variable descriptions ─────────────────────────────────────────────────
-    st.markdown('### Variable Descriptions')
+    st.markdown('### Simple Column Guide')
     var_df = pd.DataFrame(VAR_DESC, columns=['Column', 'Type', 'Description'])
     st.dataframe(var_df, width='stretch', hide_index=True,
                  column_config={'Column': st.column_config.TextColumn(width='medium')})
-    st.caption('⭐ = key variables used in this analysis')
+    st.caption('⭐ = most important columns used in this dashboard')
 
     # ── Missing values ────────────────────────────────────────────────────────
-    st.markdown('## Missing Values & Data Quality')
+    st.markdown('## Missing Data Check')
     col_l, col_r = st.columns(2)
 
     with col_l:
@@ -78,15 +78,15 @@ def render(df: pd.DataFrame, df_raw: pd.DataFrame) -> None:
             fig.update_coloraxes(showscale=False)
             render_chart(fig, height=300)
         else:
-            st.success('No missing values detected.')
+            st.success('No missing values found.')
 
     with col_r:
         dups = df_raw.duplicated().sum()
-        st.metric('Duplicate Rows', f"{dups:,}")
+        st.metric('Duplicate rows', f"{dups:,}")
         if dups == 0:
-            st.success('✅ No duplicate rows detected.')
+            st.success('✅ No duplicate rows found.')
         else:
-            st.warning(f'⚠️ {dups} duplicates found.')
+            st.warning(f'⚠️ {dups} duplicate rows found.')
 
         dtype_fig = px.pie(
             names=['Categorical (object)', 'Numeric (float/int)', 'Boolean'],
@@ -97,7 +97,7 @@ def render(df: pd.DataFrame, df_raw: pd.DataFrame) -> None:
         render_chart(dtype_fig, height=280)
 
     # ── Summary statistics ────────────────────────────────────────────────────
-    st.markdown('## Summary Statistics for Key Variables')
+    st.markdown('## Quick Number Summary')
     key_cols = ['rtp', 'min_bet', 'max_win', 'max_multiplier']
     stats = df_raw[key_cols].describe(percentiles=[0.05, 0.25, 0.5, 0.75, 0.95]).T
     stats.index.name = 'Variable'
@@ -106,7 +106,7 @@ def render(df: pd.DataFrame, df_raw: pd.DataFrame) -> None:
 
     col1, col2 = st.columns(2)
     with col1:
-        st.markdown('### House Edge = 100 − RTP')
+        st.markdown('### House Edge (100 − RTP)')
         he_table = pd.DataFrame({
             'Metric': ['Min', '5th Pct', 'Median', 'Mean', '95th Pct', 'Max'],
             'House Edge (%)': [
@@ -121,7 +121,7 @@ def render(df: pd.DataFrame, df_raw: pd.DataFrame) -> None:
         st.dataframe(he_table.round(3), width='stretch', hide_index=True)
 
     with col2:
-        st.markdown('### Game Type Counts')
+        st.markdown('### Number of Games by Type')
         gt = df_raw['game_type'].value_counts().reset_index()
         gt.columns = ['Game Type', 'Count']
         gt['% Share'] = (gt['Count'] / gt['Count'].sum() * 100).round(1)

@@ -15,8 +15,7 @@ from dashboard.config import COLORS, render_chart
 def render(df: pd.DataFrame, df_raw: pd.DataFrame) -> None:
     st.markdown('# 🃏 The House Always Wins?')
     st.markdown(
-        '#### Analysing the relationship between RTP, house edge, volatility, '
-        'and player odds across 1.2 M casino game records.'
+        '#### A student-friendly data story about casino games and long-run winning chances.'
     )
     st.divider()
 
@@ -36,16 +35,15 @@ def render(df: pd.DataFrame, df_raw: pd.DataFrame) -> None:
 
 > **Does the data support the saying "The House Always Wins"?**
 
-The **Return to Player (RTP)** is the percentage of total bets a game pays back
-to players over time. If a game has 96 % RTP, the casino keeps an average of
-**4 ¢ for every $1 bet** — this is the **house edge**.
+**RTP** means how much money a game gives back over time.
+If RTP is 96%, players get back about 96 cents for each $1 bet.
+The casino keeps the other 4 cents. We call that the **house edge**.
 
-This EDA investigates:
-- How large is the house edge across the game library?
-- Which game types, providers, and volatility levels favour the house most?
-- How does the maximum possible win compare to the minimum bet (reward-to-risk)?
-- Do bonus features genuinely improve player returns?
-- Has the industry become more or less player-friendly over time?
+In this dashboard, we answer:
+1. Measure the house edge (100 − RTP) across 50,000 casino games.
+2. Compare fairness across game types, volatility, and providers.
+3. Investigate whether bonus features (free spins, bonus buy) improve player odds.
+4. Identify which providers offer the most player-friendly games.
         """)
 
     with col_r:
@@ -70,10 +68,10 @@ This EDA investigates:
 
 | Section | Content |
 |---|---|
-| **1.1 Data Understanding** | Shape, types, missing values, summary stats |
-| **1.2 Data Cleaning** | Steps taken, feature engineering justifications |
-| **1.3 Univariate Analysis** | Distributions of RTP, house edge, volatility, bets, wins |
-| **1.4 Bivariate & Multivariate** | Relationships, correlations, grouped comparisons |
-| **1.5 Visualisations Summary** | All key charts in one view |
-| **1.6 Key Insights & Conclusion** | 5 findings + limitations |
+| **1.1 Understand the Data** | What the data contains, missing values, and quick summaries |
+| **1.2 Clean the Data** | What was removed, fixed, and added |
+| **1.3 One-Thing-at-a-Time View** | Simple views of RTP, house edge, risk, bets, and wins |
+| **1.4 Compare Variables** | Put values side by side to spot patterns |
+| **1.5 All Charts in One Place** | Quick chart summary on one page |
+| **1.6 Main Findings & Conclusion** | Main takeaways and limits of this analysis |
     """)

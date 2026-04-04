@@ -62,7 +62,7 @@ def _render_team_card(member: dict[str, object]) -> str:
 
 def render() -> None:
     st.title('About the Authors')
-    st.markdown('Get to know the authors and their responsibilities in developing this project.')
+    st.markdown('Meet the team members who built this dashboard.')
     st.markdown(
         '<div class="team-grid">' + ''.join(_render_team_card(member) for member in TEAM_MEMBERS) + '</div>',
         unsafe_allow_html=True,

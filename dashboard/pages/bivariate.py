@@ -21,13 +21,13 @@ from dashboard.config import COLORS, PALETTE, VOL_ORDER, badge, render_chart, th
 
 
 def render(df: pd.DataFrame) -> None:
-    st.title('1.4  Bivariate & Multivariate Analysis')
+    st.title('1.4  Compare Variables')
     badge('EDA REQUIREMENT 1.4')
-    st.markdown('*Relationships between variables that support the narrative.*')
+    st.markdown('*Compare values side by side to find easy-to-see patterns.*')
 
     # ── House edge by game type ───────────────────────────────────────────────
     st.markdown('## House Edge by Game Type')
-    st.markdown('**Question:** Which game type has the highest house edge?')
+    st.markdown('**Question:** Which game types let the casino keep more?')
     col1, col2 = st.columns([2, 1])
     with col1:
         he_summary = (df.groupby('game_type', observed=True)['house_edge']
@@ -50,11 +50,11 @@ def render(df: pd.DataFrame) -> None:
         he_by_type.columns = ['Game Type', 'Mean HE%', 'Median HE%', 'Std']
         he_by_type = he_by_type.sort_values('Mean HE%', ascending=False)
         st.dataframe(he_by_type, width='stretch', hide_index=True)
-        st.caption('Higher house edge means the casino keeps more per $1 bet.')
+        st.caption('Higher house edge means the casino keeps more from each $1 bet.')
 
     # ── RTP by volatility ─────────────────────────────────────────────────────
-    st.markdown('## RTP vs Volatility')
-    st.markdown('**Question:** Does volatility affect RTP?')
+    st.markdown('## RTP by Risk Level')
+    st.markdown('**Question:** Does risk level change RTP much?')
     col1, col2 = st.columns(2)
     with col1:
         rtp_mean = (df.groupby('volatility', observed=True)['rtp']
@@ -74,11 +74,11 @@ def render(df: pd.DataFrame) -> None:
                      .round(3).reset_index())
         rtp_vol.columns = ['Volatility', 'Mean RTP%', 'Median RTP%', 'Count']
         st.dataframe(rtp_vol, width='stretch', hide_index=True)
-        st.caption('Average RTP stays very similar across volatility levels.')
+        st.caption('Average RTP is very similar across risk levels.')
 
     # ── Bonus features vs RTP ─────────────────────────────────────────────────
-    st.markdown('## Do Bonus Features Improve Player Odds?')
-    st.markdown('**Question:** Does Free Spins or Bonus Buy increase RTP?')
+    st.markdown('## Bonus Features and Player Odds')
+    st.markdown('**Question:** Do free spins or bonus buy raise RTP?')
     col1, col2 = st.columns(2)
     with col1:
         bonus_compare = pd.DataFrame({
@@ -100,13 +100,13 @@ def render(df: pd.DataFrame) -> None:
     with col2:
         st.dataframe(bonus_compare, width='stretch', hide_index=True)
         st.caption(
-            'The difference is < 0.1 pp. Bonus features are marketing tools, '
-            'not genuine RTP improvements.'
+            'The difference is tiny (< 0.1 percentage points). Bonus features '
+            'mostly change the game feel, not long-run return.'
         )
 
     # ── RTP vs Max Multiplier scatter ─────────────────────────────────────────
-    st.markdown('## RTP vs Max Multiplier — The Risk-Reward Trade-off')
-    st.markdown('**Question:** Do games with higher max wins have different RTP?')
+    st.markdown('## RTP and Max Multiplier')
+    st.markdown('**Question:** Do bigger possible wins come with better RTP?')
     sdf = df[df['max_multiplier'] <= df['max_multiplier'].quantile(0.99)].sample(
         min(5000, len(df)), random_state=42)
     fig = px.scatter(sdf, x='rtp', y='max_multiplier',
@@ -120,15 +120,15 @@ def render(df: pd.DataFrame) -> None:
                      trendline='ols' if HAS_STATSMODELS else None)
     render_chart(fig, height=400)
     if not HAS_STATSMODELS:
-        st.caption('Trendline disabled: install `statsmodels` in the runtime environment.')
+        st.caption('Trendline is off because `statsmodels` is not installed.')
     st.caption(
-        'High-volatility games offer bigger multipliers but similar RTP — '
-        'you can win big occasionally, the house edge stays the same.'
+        'High-risk games can show bigger top wins, but RTP stays similar. '
+        'Big win chance changes, house advantage stays.'
     )
 
     # ── Best / worst providers ────────────────────────────────────────────────
-    st.markdown('## Provider Analysis — Who Favours the House Most?')
-    st.markdown('**Question:** Which providers have the highest house edge?')
+    st.markdown('## Provider Comparison')
+    st.markdown('**Question:** Which providers have higher house edge?')
     prov_he = (df.groupby('provider', observed=True)['house_edge']
                  .agg(['mean', 'count']).reset_index()
                  .rename(columns={'mean': 'Avg House Edge', 'count': 'Games'})
@@ -150,30 +150,30 @@ def render(df: pd.DataFrame) -> None:
         fig = px.bar(top10_best, x='Avg House Edge', y='provider', orientation='h',
                      color='Avg House Edge', color_continuous_scale='Greens',
                      labels={'provider': 'Provider', 'Avg House Edge': 'Avg House Edge (%)'},
-                     title='Lowest House Edge Providers (most player-friendly)')
+                     title='Lowest House Edge Providers (better for players)')
         fig.update_coloraxes(showscale=False)
         theme(fig).update_layout(yaxis=dict(autorange='reversed'))
         render_chart(fig, height=360)
 
     # ── Correlation heatmap ───────────────────────────────────────────────────
-    st.markdown('## Correlation Matrix — Numeric Variables')
-    st.markdown('**Question:** Are game features connected to RTP or house edge?')
+    st.markdown('## Which Numbers Move Together?')
+    st.markdown('**Question:** Which values rise or fall together?')
     num_cols = ['rtp', 'house_edge', 'min_bet', 'max_win', 'max_multiplier', 'release_year']
     corr = df[num_cols].corr().round(3)
     fig = px.imshow(corr, text_auto=True,
                     color_continuous_scale='RdBu', zmin=-1, zmax=1,
-                    title='Correlation Matrix of Key Numeric Variables',
+                    title='How Key Numbers Move Together',
                     aspect='auto')
     render_chart(fig, height=400)
     st.caption(
-        '`rtp` and `house_edge` are perfectly negatively correlated (−1.0) by definition. '
-        '`max_multiplier` shows weak correlation with RTP, confirming large potential '
-        'wins do not improve long-run player odds.'
+        'RTP and house edge always move in opposite directions. '
+        'Max multiplier has only a weak link with RTP, so bigger top wins do not '
+        'automatically mean better long-run returns.'
     )
 
     # ── House edge trend over years ───────────────────────────────────────────
-    st.markdown('## Has the House Edge Changed Over Time?')
-    st.markdown('**Question:** Is house edge higher in newer games?')
+    st.markdown('## House Edge Over Time')
+    st.markdown('**Question:** Are newer games better or worse for players?')
     trend = (df[df['release_year'] >= 2010]
              .groupby('release_year', observed=True)['house_edge']
              .agg(['mean', 'median', 'std']).reset_index())

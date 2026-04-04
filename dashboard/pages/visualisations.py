@@ -14,12 +14,12 @@ from dashboard.config import COLORS, PALETTE, VOL_ORDER, badge, render_chart, th
 
 
 def render(df: pd.DataFrame) -> None:
-    st.title('1.5  Key Visualisations Summary')
+    st.title('1.5  All Charts in One Place')
     badge('EDA REQUIREMENT 1.5')
-    st.markdown('*All key charts in one place — clear, labelled, and tied to the story.*')
+    st.markdown('*A quick, student-friendly chart summary of the main findings.*')
 
     tab1, tab2, tab3, tab4 = st.tabs(
-        ['🏦 House Edge', '🎲 Volatility & Risk', '🎮 Game Types', '💰 Win Potential']
+        ['🏦 House Edge', '🎲 Risk Levels', '🎮 Game Types', '💰 Win Potential']
     )
 
     # ── Tab 1: House Edge ─────────────────────────────────────────────────────
@@ -41,7 +41,7 @@ def render(df: pd.DataFrame) -> None:
             fig = px.bar(he_gt, x='Game Type', y='Avg House Edge (%)',
                          color='Avg House Edge (%)', color_continuous_scale='Reds',
                          text='Avg House Edge (%)',
-                         title='Avg House Edge by Game Type')
+                         title='Average House Edge by Game Type')
             fig.update_traces(texttemplate='%{text:.2f}%', textposition='outside')
             fig.update_coloraxes(showscale=False)
             render_chart(fig, height=300)
@@ -70,7 +70,7 @@ def render(df: pd.DataFrame) -> None:
             fig = px.bar(he_vol, x='Volatility', y='Mean House Edge (%)',
                          color='Mean House Edge (%)', color_continuous_scale='Reds',
                          text='Mean House Edge (%)',
-                         title='Mean House Edge by Volatility')
+                         title='Average House Edge by Risk Level')
             fig.update_traces(texttemplate='%{text:.2f}%', textposition='outside')
             fig.update_coloraxes(showscale=False)
             render_chart(fig, height=320)
@@ -80,14 +80,14 @@ def render(df: pd.DataFrame) -> None:
             pivot_table = he_vol_gt.pivot(index='game_type', columns='volatility', values='house_edge').round(2)
             pivot_table = pivot_table[[c for c in VOL_ORDER if c in pivot_table.columns]]
             st.dataframe(pivot_table, use_container_width=True)
-            st.caption('Mean house edge for each combination')
+            st.caption('Average house edge for each game type and risk level (easy comparison table)')
 
         he_mm = df.groupby('volatility', observed=True)['max_multiplier'].mean().reindex(VOL_ORDER).reset_index()
         he_mm.columns = ['Volatility', 'Mean Max Multiplier']
         fig = px.bar(he_mm, x='Volatility', y='Mean Max Multiplier',
                      color_discrete_sequence=[COLORS['purple']],
                      text='Mean Max Multiplier',
-                     title='Mean Max Multiplier by Volatility')
+                     title='Average Max Multiplier by Risk Level')
         fig.update_traces(texttemplate='%{text:.0f}x', textposition='outside')
         render_chart(fig, height=360)
 
@@ -99,7 +99,7 @@ def render(df: pd.DataFrame) -> None:
             gt_cnt.columns = ['Game Type', 'Count']
             fig = px.pie(gt_cnt, names='Game Type', values='Count',
                          color_discrete_sequence=PALETTE, hole=0.45,
-                         title='Game Type Share of Library')
+                         title='Game Type Share')
             fig.update_traces(textinfo='label+percent')
             render_chart(fig, height=320)
         with col2:
@@ -121,7 +121,7 @@ def render(df: pd.DataFrame) -> None:
         fig = px.bar(cat_he, x='Category', y='Avg HE%',
                      color='Avg HE%', color_continuous_scale='Reds',
                      text='Avg HE%',
-                     title='Top 15 Categories by Avg House Edge (≥100 games)')
+                     title='Top 15 Categories by Average House Edge (≥100 games)')
         fig.update_traces(texttemplate='%{text:.2f}%', textposition='outside')
         fig.update_coloraxes(showscale=False)
         render_chart(fig, height=360)
@@ -135,7 +135,7 @@ def render(df: pd.DataFrame) -> None:
                                x='win_to_bet_ratio', nbins=50,
                                color_discrete_sequence=[COLORS['green']],
                                labels={'win_to_bet_ratio': 'Win-to-Bet Ratio (x)'},
-                               title='Win-to-Bet Ratio Distribution (97th pct cap)')
+                               title='Win-to-Bet Ratio Distribution (very large outliers trimmed for clarity)')
             render_chart(fig, height=300)
         with col2:
             wbr_vol = (df.groupby('volatility', observed=True)['win_to_bet_ratio']
@@ -144,7 +144,7 @@ def render(df: pd.DataFrame) -> None:
             fig = px.bar(wbr_vol, x='Volatility', y='Median Win-to-Bet Ratio',
                          color='Median Win-to-Bet Ratio', color_continuous_scale='Greens',
                          category_orders={'Volatility': VOL_ORDER},
-                         title='Median Win-to-Bet Ratio by Volatility')
+                         title='Median Win-to-Bet Ratio by Risk Level')
             fig.update_coloraxes(showscale=False)
             render_chart(fig, height=300)
 
@@ -160,7 +160,7 @@ def render(df: pd.DataFrame) -> None:
         fig = px.bar(bonus_rtp, x='Condition', y='Mean RTP (%)',
                      color='Mean RTP (%)', color_continuous_scale='RdYlGn',
                      range_color=[95.5, 97], text='Mean RTP (%)',
-                     title='Impact of Bonus Features on Mean RTP')
+                     title='Bonus Features vs Average RTP')
         fig.update_traces(texttemplate='%{text:.3f}%', textposition='outside')
         fig.update_coloraxes(showscale=False)
         render_chart(fig, height=320)

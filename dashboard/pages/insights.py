@@ -13,11 +13,11 @@ from dashboard.config import badge, insight
 
 
 def render(df: pd.DataFrame) -> None:
-    st.title('1.6  Key Insights & Conclusion')
+    st.title('1.6  Main Findings & Conclusion')
     badge('EDA REQUIREMENT 1.6')
-    st.markdown("### Story Angle: *\"The House Always Wins?\"*")
+    st.markdown("### Big Question: *\"Does the house always win?\"* (Student Summary)")
 
-    st.markdown('## 🔍 5 Key Findings')
+    st.markdown('## 🔍 5 Main Findings')
 
     avg_he     = df['house_edge'].mean()
     worst_type = df.groupby('game_type', observed=True)['house_edge'].mean().idxmax()
@@ -30,36 +30,35 @@ def render(df: pd.DataFrame) -> None:
     lo_mult    = df[df['volatility'] == 'Low']['max_multiplier'].median()
 
     insight(1, f"""
-<strong>The house always wins — on average 3.8 ¢ per dollar bet.</strong><br/>
+<strong>The house wins in the long run — about 3.8 cents per $1 bet on average.</strong><br/>
 Across {len(df):,} games, the mean house edge is <strong>{avg_he:.2f}%</strong>
 (mean RTP = {df['rtp'].mean():.2f}%). No game in the dataset exceeds 99.5 % RTP,
-meaning the casino <em>always</em> retains at least 0.5 % of every dollar wagered.
-The math is permanently in the house's favour.
+so the casino still keeps at least 0.5% over time.
+In short: the setup favors the casino.
     """)
 
     insight(2, f"""
-<strong>Game type is the biggest driver of house advantage.</strong><br/>
+<strong>Game type makes a big difference.</strong><br/>
 <em>{worst_type.title()}</em> games carry the highest average house edge at
 <strong>{worst_he:.2f}%</strong>, while <em>{best_type.title()}</em> games are the
 most player-friendly at <strong>{best_he:.2f}%</strong>.
-Choosing the right game type has a greater impact on expected value than any strategy.
+For students: picking a better game type matters more than most player tactics.
     """)
 
     insight(3, f"""
-<strong>Volatility changes the <em>experience</em> of losing — not the mathematical outcome.</strong><br/>
+<strong>Risk level changes the ride, not the long-run result.</strong><br/>
 Very High volatility games offer a median max multiplier of <strong>{vh_mult:,.0f}x</strong>
-versus only <strong>{lo_mult:,.0f}x</strong> for Low volatility — chance of a life-changing win.
-However, mean house edge is virtually identical across all volatility tiers.
-High volatility means ruin faster or win bigger; the casino's long-run advantage is unchanged.
+versus <strong>{lo_mult:,.0f}x</strong> for Low volatility.
+But the average house edge is almost the same across risk levels.
+So risk changes how results feel (big swings), not who keeps the edge.
     """)
 
     insight(4, f"""
-<strong>Bonus features do not meaningfully improve player odds.</strong><br/>
+<strong>Bonus features do not really improve long-run odds.</strong><br/>
 Games with free spins average {fs_rtp:.3f}% RTP vs {no_fs_rtp:.3f}% without —
 a difference of only <strong>{abs(fs_rtp - no_fs_rtp):.3f} percentage points</strong>.
-The bonus-buy feature shows an equally negligible gap.
-Bonus rounds increase engagement and session length, but they are <em>not</em> mechanisms
-to shift the mathematical edge toward the player.
+Bonus buy shows a similarly tiny gap.
+These features can make games more exciting, but they do not change the core edge much.
     """)
 
     rtp_2010 = (df[df['release_year'] == 2010]['rtp'].mean()
@@ -70,21 +69,20 @@ to shift the mathematical edge toward the player.
     if rtp_2010 and rtp_2024:
         direction = 'improved' if rtp_2024 > rtp_2010 else 'declined'
         insight(5, f"""
-<strong>Player odds have {direction} marginally over 14 years — but the house remains in control.</strong><br/>
+<strong>Player odds have {direction} slightly over 14 years — but the house still leads.</strong><br/>
 Mean RTP was {rtp_2010:.2f}% for games released in 2010 vs {rtp_2024:.2f}% in 2024
-(Δ = {rtp_2024 - rtp_2010:+.2f} pp). Regulatory pressure and market competition nudge RTPs
-upward, but the structural advantage is built into the mathematical model by design —
-it cannot be competed away.
+(Δ = {rtp_2024 - rtp_2010:+.2f} points). Competition may move RTP a little,
+but casinos still keep a built-in advantage.
         """)
     else:
         prov_min = df.groupby('provider', observed=True)['house_edge'].mean().min()
         prov_max = df.groupby('provider', observed=True)['house_edge'].mean().max()
         insight(5, f"""
-<strong>Provider competition has narrowed — but not closed — the house edge gap.</strong><br/>
+<strong>Provider differences are real, but none remove the house edge.</strong><br/>
 Among providers with ≥20 games, house edge ranges from
 ~{prov_min:.2f}% to ~{prov_max:.2f}%.
-Market forces push some providers to offer higher RTPs to attract players,
-yet none surrender their mathematical advantage entirely.
+Some providers offer better returns than others,
+but no provider gives up the built-in edge.
         """)
 
     # ── Conclusion ────────────────────────────────────────────────────────────
@@ -92,35 +90,33 @@ yet none surrender their mathematical advantage entirely.
     st.markdown(f"""
 > **Yes — the data overwhelmingly supports "The House Always Wins."**
 > The mean house edge of **{avg_he:.2f}%** across all game types and providers
-> confirms that casino game mathematics are structured to guarantee long-term
-> operator profit. No game offers true 100 % RTP.
+> shows that casinos are designed to profit over time. No game in this data
+> reaches true 100% RTP.
 
-The most meaningful player decisions are:
+The most useful takeaways are:
 1. **Choose game type carefully** — some types offer materially better odds.
-2. **Understand volatility** — it changes the *shape* of your losses, not the total.
-3. **Don't be misled by bonus features** — negligible effect on actual RTP.
+2. **Understand risk level** — it changes the ups and downs, not the long-run edge.
+3. **Treat bonus features carefully** — they have only a small effect on RTP.
     """)
 
     # ── Limitations & next steps ──────────────────────────────────────────────
-    st.markdown('## ⚠️  Limitations & Next Steps')
+    st.markdown('## ⚠️  Limits and Next Steps')
     col1, col2 = st.columns(2)
     with col1:
         st.markdown("""
-**Limitations**
-- Dataset describes **game specifications** — not live session records.
-  Actual player outcomes may deviate from theoretical RTP.
-- `jackpot` column is 89 % missing; progressive jackpot mechanics could not be analysed.
-- Promotional cashback / reload bonuses can effectively raise real-world RTP beyond listed values.
-- `max_multiplier` missing for ~18 % of rows, limiting reward analysis coverage.
+**Limits**
+- This data shows **game settings**, not real player session history.
+- `jackpot` is mostly empty, so jackpot behavior was not studied.
+- Promotions (cashback, reloads) are not included and may change real-world returns.
+- `max_multiplier` is missing for about 18% of rows.
         """)
     with col2:
         st.markdown("""
 **Next Steps**
-- Obtain **transactional player data** (bets, wins, session logs) to validate theoretical RTP.
-- Analyse **progressive jackpot mechanics** with a more complete dataset.
-- Investigate **responsible gambling patterns** — which volatility/game combinations
-  correlate with longer sessions or escalating bets.
-- Build a **game recommender** that ranks by player-friendliness (high RTP + low volatility).
+- Use real session data (bets and wins) to compare with listed RTP.
+- Add better jackpot data for deeper jackpot analysis.
+- Study which game/risk combinations are linked to longer play sessions.
+- Build a simple game ranking based on higher RTP and lower risk.
         """)
 
     st.divider()

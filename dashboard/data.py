@@ -94,50 +94,50 @@ def load_clean(nrows: int | None = None, use_sample: bool = True) -> tuple[pd.Da
     n_missing = df['jackpot'].isna().sum()
     pct = n_missing / len(df) * 100
     df = df.drop(columns=['jackpot'], errors='ignore')
-    log.append(('Dropped `jackpot` column',
-                 f'{pct:.1f}% missing ({n_missing:,} / {len(df)+n_missing:,} rows). Not usable.',
+    log.append(('Removed `jackpot` column',
+                 f'{pct:.1f}% was empty ({n_missing:,} rows), so this column was not useful.',
                  '🗑️'))
 
     # 2 ── drop null max_multiplier
     before = len(df)
     df = df.dropna(subset=['max_multiplier'])
     dropped = before - len(df)
-    log.append(('Dropped rows with null `max_multiplier`',
-                 f'{dropped:,} rows removed ({dropped/before*100:.1f}%). Required for reward analysis.',
+    log.append(('Removed rows missing `max_multiplier`',
+                 f'{dropped:,} rows were removed ({dropped/before*100:.1f}%) so win potential can be compared fairly.',
                  '🗑️'))
 
     # 3 ── house_edge
     df['house_edge'] = (100 - df['rtp']).round(4)
-    log.append(('Engineered `house_edge`',
-                 '`house_edge = 100 − rtp`.  Direct measure of casino advantage per bet.',
+    log.append(('Added `house_edge`',
+                 '`house_edge = 100 − rtp`. This shows how much the casino keeps per $1 bet.',
                  '⚙️'))
 
     # 4 ── win_to_bet_ratio
     df['win_to_bet_ratio'] = (df['max_win'] / df['min_bet']).round(2)
-    log.append(('Engineered `win_to_bet_ratio`',
-                 '`max_win / min_bet`.  Maximum potential upside relative to entry cost.',
+    log.append(('Added `win_to_bet_ratio`',
+                 '`max_win / min_bet`. This compares possible top win vs starting bet.',
                  '⚙️'))
 
     # 5 ── cap outliers
     cap = df['win_to_bet_ratio'].quantile(0.99)
     df['win_to_bet_ratio_capped'] = df['win_to_bet_ratio'].clip(upper=cap)
-    log.append(('Capped `win_to_bet_ratio` at 99th pct',
-                 f'Values above {cap:,.0f}x capped for visualisation only.',
+    log.append(('Limited very large `win_to_bet_ratio` values',
+                 f'Values above {cap:,.0f}x were capped for clearer charts only.',
                  '✂️'))
 
     # 6 ── ordered volatility
     vol_order = ['Low', 'Medium', 'High', 'Very High']
     df['volatility'] = pd.Categorical(df['volatility'],
                                       categories=vol_order, ordered=True)
-    log.append(('Ordered `volatility` as ordinal',
-                 'Set Low < Medium < High < Very High for correct axis ordering.',
+    log.append(('Set a clear order for `volatility`',
+                 'Low, Medium, High, Very High — so charts are shown in a natural order.',
                  '🔄'))
 
     # 7 ── parse dates
     df['last_updated'] = pd.to_datetime(df['last_updated'], errors='coerce')
     df['update_year']  = df['last_updated'].dt.year
-    log.append(('Parsed `last_updated` as datetime',
-                 'Extracted `update_year` for trend charts.',
+    log.append(('Converted `last_updated` to date format',
+                 'Also created `update_year` to show year-by-year trends.',
                  '📅'))
 
     return df, log
