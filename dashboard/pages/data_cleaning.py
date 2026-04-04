@@ -13,7 +13,7 @@ from dashboard.config import badge
 
 
 def render(df: pd.DataFrame, cleaning_log: list) -> None:
-    st.title('1.2  Clean the Data')
+    st.title('1.2  Data Cleaning')
     badge('EDA REQUIREMENT 1.2')
 
     st.markdown("""

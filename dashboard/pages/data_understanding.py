@@ -39,7 +39,7 @@ VAR_DESC = [
 
 
 def render(df: pd.DataFrame, df_raw: pd.DataFrame) -> None:
-    st.title('1.1  Understand the Data')
+    st.title('1.1  Data Understanding')
     badge('EDA REQUIREMENT 1.1')
 
     # ── Dimensions ────────────────────────────────────────────────────────────

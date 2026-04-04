@@ -14,7 +14,7 @@ from dashboard.config import COLORS, PALETTE, VOL_ORDER, badge, render_chart
 
 
 def render(df: pd.DataFrame) -> None:
-    st.title('1.3  One-Thing-at-a-Time View')
+    st.title('1.3  Univariate Analysis')
     badge('EDA REQUIREMENT 1.3')
     st.markdown('*Simple charts that look at one value at a time.*')
 

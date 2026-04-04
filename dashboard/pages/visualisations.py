@@ -14,12 +14,12 @@ from dashboard.config import COLORS, PALETTE, VOL_ORDER, badge, render_chart, th
 
 
 def render(df: pd.DataFrame) -> None:
-    st.title('1.5  All Charts in One Place')
+    st.title('1.5  Visualisations Summary')
     badge('EDA REQUIREMENT 1.5')
-    st.markdown('*A quick, student-friendly chart summary of the main findings.*')
+    st.markdown('*An owner-focused summary of key margin and portfolio charts.*')
 
     tab1, tab2, tab3, tab4 = st.tabs(
-        ['🏦 House Edge', '🎲 Risk Levels', '🎮 Game Types', '💰 Win Potential']
+        ['🏦 Margin View', '🎲 Risk Tiers', '🎮 Portfolio Mix', '💰 Win-Promise Profile']
     )
 
     # ── Tab 1: House Edge ─────────────────────────────────────────────────────

@@ -13,11 +13,11 @@ from dashboard.config import badge, insight
 
 
 def render(df: pd.DataFrame) -> None:
-    st.title('1.6  Main Findings & Conclusion')
+    st.title('1.6  Key Insights & Conclusion')
     badge('EDA REQUIREMENT 1.6')
-    st.markdown("### Big Question: *\"Does the house always win?\"* (Student Summary)")
+    st.markdown("### Big Question: *\"How should casino owners optimize margin and revenue?\"*")
 
-    st.markdown('## 🔍 5 Main Findings')
+    st.markdown('## 🔍 5 Owner-Focused Findings')
 
     avg_he     = df['house_edge'].mean()
     worst_type = df.groupby('game_type', observed=True)['house_edge'].mean().idxmax()
@@ -30,35 +30,35 @@ def render(df: pd.DataFrame) -> None:
     lo_mult    = df[df['volatility'] == 'Low']['max_multiplier'].median()
 
     insight(1, f"""
-<strong>The house wins in the long run — about 3.8 cents per $1 bet on average.</strong><br/>
+<strong>The portfolio has stable built-in margin — about 3.8 cents per $1 bet on average.</strong><br/>
 Across {len(df):,} games, the mean house edge is <strong>{avg_he:.2f}%</strong>
 (mean RTP = {df['rtp'].mean():.2f}%). No game in the dataset exceeds 99.5 % RTP,
-so the casino still keeps at least 0.5% over time.
-In short: the setup favors the casino.
+so operators retain at least 0.5% over time.
+This supports predictable long-run profitability.
     """)
 
     insight(2, f"""
-<strong>Game type makes a big difference.</strong><br/>
+<strong>Game type is the strongest margin lever.</strong><br/>
 <em>{worst_type.title()}</em> games carry the highest average house edge at
 <strong>{worst_he:.2f}%</strong>, while <em>{best_type.title()}</em> games are the
-most player-friendly at <strong>{best_he:.2f}%</strong>.
-For students: picking a better game type matters more than most player tactics.
+lowest-margin segment at <strong>{best_he:.2f}%</strong>.
+Portfolio mix by game type should be a priority decision.
     """)
 
     insight(3, f"""
-<strong>Risk level changes the ride, not the long-run result.</strong><br/>
+<strong>Risk tiers reshape player experience while margin stays similar.</strong><br/>
 Very High volatility games offer a median max multiplier of <strong>{vh_mult:,.0f}x</strong>
 versus <strong>{lo_mult:,.0f}x</strong> for Low volatility.
 But the average house edge is almost the same across risk levels.
-So risk changes how results feel (big swings), not who keeps the edge.
+This enables segmented product design without major margin trade-offs.
     """)
 
     insight(4, f"""
-<strong>Bonus features do not really improve long-run odds.</strong><br/>
+<strong>Bonus features have minimal impact on expected margin.</strong><br/>
 Games with free spins average {fs_rtp:.3f}% RTP vs {no_fs_rtp:.3f}% without —
 a difference of only <strong>{abs(fs_rtp - no_fs_rtp):.3f} percentage points</strong>.
 Bonus buy shows a similarly tiny gap.
-These features can make games more exciting, but they do not change the core edge much.
+These features can be treated mainly as engagement tools, not margin risks.
     """)
 
     rtp_2010 = (df[df['release_year'] == 2010]['rtp'].mean()
@@ -69,34 +69,33 @@ These features can make games more exciting, but they do not change the core edg
     if rtp_2010 and rtp_2024:
         direction = 'improved' if rtp_2024 > rtp_2010 else 'declined'
         insight(5, f"""
-<strong>Player odds have {direction} slightly over 14 years — but the house still leads.</strong><br/>
+<strong>Market RTP has {direction} slightly over 14 years, but operator edge remains strong.</strong><br/>
 Mean RTP was {rtp_2010:.2f}% for games released in 2010 vs {rtp_2024:.2f}% in 2024
 (Δ = {rtp_2024 - rtp_2010:+.2f} points). Competition may move RTP a little,
-but casinos still keep a built-in advantage.
+but a durable house edge remains.
         """)
     else:
         prov_min = df.groupby('provider', observed=True)['house_edge'].mean().min()
         prov_max = df.groupby('provider', observed=True)['house_edge'].mean().max()
         insight(5, f"""
-<strong>Provider differences are real, but none remove the house edge.</strong><br/>
+<strong>Provider selection materially affects margin quality.</strong><br/>
 Among providers with ≥20 games, house edge ranges from
 ~{prov_min:.2f}% to ~{prov_max:.2f}%.
-Some providers offer better returns than others,
-but no provider gives up the built-in edge.
+Provider partnerships should balance margin target, brand fit, and product mix.
         """)
 
     # ── Conclusion ────────────────────────────────────────────────────────────
     st.markdown('## 🔖 Conclusion')
     st.markdown(f"""
-> **Yes — the data overwhelmingly supports "The House Always Wins."**
-> The mean house edge of **{avg_he:.2f}%** across all game types and providers
-> shows that casinos are designed to profit over time. No game in this data
-> reaches true 100% RTP.
+> **This portfolio supports strong, consistent operator profitability.**
+> The mean house edge of **{avg_he:.2f}%** across game types and providers
+> indicates a robust long-run margin structure.
 
-The most useful takeaways are:
-1. **Choose game type carefully** — some types offer materially better odds.
-2. **Understand risk level** — it changes the ups and downs, not the long-run edge.
-3. **Treat bonus features carefully** — they have only a small effect on RTP.
+Recommended owner actions:
+1. **Optimize game-type mix** toward higher-margin categories.
+2. **Use volatility as a segmentation tool** while monitoring total margin.
+3. **Use bonus features for engagement** since margin impact is limited.
+4. **Prioritize provider contracts** based on edge profile and catalog quality.
     """)
 
     # ── Limitations & next steps ──────────────────────────────────────────────
@@ -113,10 +112,10 @@ The most useful takeaways are:
     with col2:
         st.markdown("""
 **Next Steps**
-- Use real session data (bets and wins) to compare with listed RTP.
-- Add better jackpot data for deeper jackpot analysis.
-- Study which game/risk combinations are linked to longer play sessions.
-- Build a simple game ranking based on higher RTP and lower risk.
+- Add real session data (stake, session length, retention) for revenue forecasting.
+- Build a margin-by-provider scorecard for partnership planning.
+- Segment performance by market/country to support local portfolio strategy.
+- Create a pricing and promotion simulation layer for commercial planning.
         """)
 
     st.divider()

@@ -13,9 +13,10 @@ from dashboard.config import COLORS, render_chart
 
 
 def render(df: pd.DataFrame, df_raw: pd.DataFrame) -> None:
-    st.markdown('# 🃏 The House Always Wins?')
+    st.title('Introduction')
+    st.markdown('## 🃏 The House Always Wins?')
     st.markdown(
-        '#### A student-friendly data story about casino games and long-run winning chances.'
+        '#### A casino owner-focused view of margin, product mix, and long-run revenue potential.'
     )
     st.divider()
 
@@ -33,7 +34,7 @@ def render(df: pd.DataFrame, df_raw: pd.DataFrame) -> None:
         st.markdown("""
 ## Our Research Question
 
-> **Does the data support the saying "The House Always Wins"?**
+> **How can casino owners use this data to improve profit and revenue?**
 
 **RTP** means how much money a game gives back over time.
 If RTP is 96%, players get back about 96 cents for each $1 bet.
@@ -41,9 +42,9 @@ The casino keeps the other 4 cents. We call that the **house edge**.
 
 In this dashboard, we answer:
 1. Measure the house edge (100 − RTP) across 50,000 casino games.
-2. Compare fairness across game types, volatility, and providers.
-3. Investigate whether bonus features (free spins, bonus buy) improve player odds.
-4. Identify which providers offer the most player-friendly games.
+2. Compare expected margin across game types, volatility, and providers.
+3. Evaluate whether bonus features support commercial performance.
+4. Identify which providers are strongest for operator profitability.
         """)
 
     with col_r:
@@ -68,10 +69,10 @@ In this dashboard, we answer:
 
 | Section | Content |
 |---|---|
-| **1.1 Understand the Data** | What the data contains, missing values, and quick summaries |
-| **1.2 Clean the Data** | What was removed, fixed, and added |
-| **1.3 One-Thing-at-a-Time View** | Simple views of RTP, house edge, risk, bets, and wins |
-| **1.4 Compare Variables** | Put values side by side to spot patterns |
-| **1.5 All Charts in One Place** | Quick chart summary on one page |
-| **1.6 Main Findings & Conclusion** | Main takeaways and limits of this analysis |
+| **1.1 Data Understanding** | Data coverage, missing values, and variable summaries |
+| **1.2 Data Cleaning** | What was removed, fixed, and engineered |
+| **1.3 Univariate Analysis** | Distribution of core commercial metrics |
+| **1.4 Bivariate & Multivariate** | Drivers of house edge across segments |
+| **1.5 Visualisations Summary** | Fast executive view of all key charts |
+| **1.6 Key Insights & Conclusion** | Owner-focused findings and actions |
     """)
